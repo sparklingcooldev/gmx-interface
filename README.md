@@ -1,4 +1,4 @@
-# Getting Started
+# Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
@@ -6,35 +6,20 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 
 In the project directory, you can run:
 
-### `yarn`
-
-Installs dependencies
-
-At first installation, you might have to run `yarn husky install`,
-to setup pre-commit hooks
-
-### `yarn start`
+### `npm start`
 
 Runs the app in the development mode.\
-Open [http://localhost:3010](http://localhost:3010) to view it in the browser.
+Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+The page will reload when you make changes.\
+You may also see any lint errors in the console.
 
-### `yarn start-home`
-
-Start in development mode and show the home page.
-
-### `yarn start-app`
-
-Start in development mode and show the main app.
-
-### `yarn test`
+### `npm test`
 
 Launches the test runner in the interactive watch mode.\
 See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
 
-### `yarn build`
+### `npm run build`
 
 Builds the app for production to the `build` folder.\
 It correctly bundles React in production mode and optimizes the build for the best performance.
@@ -44,187 +29,43 @@ Your app is ready to be deployed!
 
 See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
 
-## Project structure
+### `npm run eject`
 
-- `App/` - React App root component, contains global providers and routing configuration
+**Note: this is a one-way operation. Once you `eject`, you can't go back!**
 
-- `components/` - React components
+If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
 
-- `pages/` - Page components
+Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
 
-- `lib/` - Infrastructure code independent of business logic (widely used in the project base modules and functions for interaction with data sources, common utils, etc.)
-  - `contracts`
-    - `callContract.ts` - e.g. base function for requesting contracts
-  - `chains`
-    - `utils.ts`
-    - `constants.ts`
-  - `request.js` - example base function for http requests
-  - `useLockBodyScroll.ts` - common ui hook
-  - `legacy.js` - Unstrcutured legacy code (moved from Helpers.js)
+You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
 
-- `domain/` - Project specific domain logic separated by entities and features, may contain
-  data fetching, formatting, types and constants 
+## Learn More
 
-  - `orders/` - Example entity folder
-    - `types.ts` - Entity related types
-    - `utils.ts` - Functions for calculations and formatting, can be split into several files
-    - `contracts.ts` - Contracts calls
-    - `backend.ts` - Http requests
-    - `graph.ts` - Subgraph queries
-    - `useActiveOrders.ts` - some complex hook with aggreation logic
-    - `constants.ts`
-    - `hooks.ts`
+You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
 
-  - `legacy.js` - Unstructured legacy code (moved from Api/index.js)
+To learn React, check out the [React documentation](https://reactjs.org/).
 
-- `config/` - Often manually changed or environment-dependent global configs and constants, can contain simple getter functions
-- `styles/` - Global styles
-- `img/` - Images
-- `abis/` - Contract abis
-- `fonts/`
+### Code Splitting
 
-## Architecture guides
+This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
 
-### React components
+### Analyzing the Bundle Size
 
-- Try to keep it simple and modular - only one component per file, Child components should be put separately
+This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
 
-- Keep a **flat** components folder structure - do not nest components inside other components folders
+### Making a Progressive Web App
 
-- Keep styles and components together in the same folder
+This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
 
-- Code, independent of state and props should be moved outside component body
+### Advanced Configuration
 
-- In general components should countain only ui logic, all resusable data processing code should be moved to the `domain` or `lib` folder, component-specific calculations
-  can be wrapped in custom hooks or functions and placed near component
+This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
 
-- Try to keep definition order inside component body:
-  1. State - useState, useFetchedData, etc.
-  2. Calculated variables from state and props
-  3. Functions reused in the component, e.g. event handlers
-  4. useEffect
-  5. Render
+### Deployment
 
-<details>
-    <summary>Example component structure</summary>
+This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
 
-- `components/`
-  - `SwapBox`
-    - `SwapBox.js`
-    - `SwapBox.css`
-    - `getErrorMessage.js` - only a component-specific logic
+### `npm run build` fails to minify
 
-</details>
-
-<details>
-    <summary>Example component body</summary>
-
-```(javascript)
-// components/SwapComponent/SwapComponent.tsx
-
-import {useInfoTokens} from 'domain/tokens/contracts'
-import {processSwap} from 'domain/exchange/contracts'
-...
-
-export function SwapComponent(props: Props) {
-const infoTokens = useInfoTokens(props.chainId, ...);
-const [selectedTokenAddress, setSelectedTokenAddress] = useState()
-const [amount, setAmount] = useState()
-const {tokenAmount, swapLimits, fees, ...} = useSwapState(
-props, {infoTokens, selectedTokenAddress, amount}
-)
-
-...
-
-useEffect(..., []);
-
-async function onButtonClick() {
-    ...
-    await processSwap(...)
-}
-
-return (
-    <div>
-        ....
-    </div>
-
-}
-
-```
-
-Optional separating component state evaluation if it contains a lot of logic which is highly
-dependent on props or a state of the component.
-
-```(javascript)
-components/SwapComponent/useSwapState.ts
-
-import {getTokenAmount} from 'domain/tokens/apiContracts'
-import {getSwapLimits} from 'domain/exchange/swap-utils'
-
-
-function useSwapState(props, {selectedTokenAddress, infoTokens, amount}) {
-  const infoTokens = useInfoTokens(props.chainId, ...);
-  
-  const tokenAmount = getTokenAmount(infoTokens, selectedTokenAddress, ...)
-  const swapLimits = getSwapLimits(infoTokens, amount)
-  
-  const swapFee = ...
-  const fees = ...
-  
-  ...some calculations
-  
-  return {...}
-}
-```
-
-</details>
-
----
-
-### DataFlow
-
-Divide a code into appropriate areas of responsibility and keep the dependencies flow:
-
-```
-config -> lib (infrastructure) -> domain -> components -> pages
-```
-
-Each layer can use code from itself or from the left side. For example `lib`-modules can require `config` and other `lib`-modules, but not `domain`-modules or `components`.
-Also `pages` can depend on `components`, but not vice versa.
-
-### Typescript
-
-- Write a new code in Typescript as far as possible
-- Components should have `.tsx` exstension
-- While migration, there are some issues when using
-  js components inside tsx - all props are considered as required.
-  To solve this, define default values for unused props or put
-  jsDoc description when this is difficult
-
-<details>
-<summary>Example</summary>
-
-```(javascript)
-/**
-* @param {any} props
-*/
-function Button(props) {...}
-```
-
-</details>
-
----
-
-### SCSS
-
-Use the following syntax to import scss modules:
-
-```
-@use "src/styles/colors";
-
-.ClassName {
-  background: colors.$color-red;
-}
-```
-
----
+This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+# Metta-protocol

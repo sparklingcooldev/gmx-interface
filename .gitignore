@@ -4,12 +4,6 @@
 /node_modules
 /.pnp
 .pnp.js
-.vscode
-
-# lingui
-/src/locales/**/*.js
-/src/locales/**/en.po
-/src/locales/_build/
 
 # testing
 /coverage
@@ -27,13 +21,3 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-
-package-lock.json
-
-.yarn/*
-!.yarn/patches
-!.yarn/plugins
-!.yarn/releases
-!.yarn/sdks
-!.yarn/versions
-/.idea/
