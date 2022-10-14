@@ -54,8 +54,9 @@ const Earn = ({ setNotification }) => {
     setPending(true);
     try {
       const valutContract = getVaultContract(provider.getSigner());
-      const rate =
+      let rate =
         ethers.utils.parseEther("1") / pool[curIndex].GDpriceToStakedToken;
+      console.log(rate);
       let estimateGas, ttx;
       console.log(curIndex);
       if (type === 1) {
@@ -81,12 +82,16 @@ const Earn = ({ setNotification }) => {
         );
         if (!isWETH && curIndex === 1) {
           estimateGas = await valutContract.estimateGas.leaveETH(
-            total.toString(),
+            Number(total) > Number(accountData[curIndex].gdBalance)
+              ? accountData[curIndex].gdBalance.toString()
+              : total.toString(),
             curIndex
           );
         } else {
           estimateGas = await valutContract.estimateGas.leave(
-            total.toString(),
+            Number(total) > Number(accountData[curIndex].gdBalance)
+              ? accountData[curIndex].gdBalance.toString()
+              : total.toString(),
             curIndex
           );
         }
@@ -119,9 +124,21 @@ const Earn = ({ setNotification }) => {
             : ethers.utils.parseUnits(amount, 18)) * rate
         );
         if (!isWETH && curIndex === 1) {
-          ttx = await valutContract.leaveETH(total.toString(), curIndex, tx);
+          ttx = await valutContract.leaveETH(
+            Number(total) > Number(accountData[curIndex].gdBalance)
+              ? accountData[curIndex].gdBalance.toString()
+              : total.toString(),
+            curIndex,
+            tx
+          );
         } else {
-          ttx = await valutContract.leave(total.toString(), curIndex, tx);
+          ttx = await valutContract.leave(
+            Number(total) > Number(accountData[curIndex].gdBalance)
+              ? accountData[curIndex].gdBalance.toString()
+              : total.toString(),
+            curIndex,
+            tx
+          );
         }
       }
       await ttx.wait();
@@ -244,7 +261,9 @@ const Earn = ({ setNotification }) => {
               <Divider />
               <PanelBody>
                 <Box>
-                  <Box color={"rgba(255, 255, 255, 0.7)"}>Total Staked</Box>
+                  <Box color={"rgba(255, 255, 255, 0.7)"}>
+                    Total Staked in Pool
+                  </Box>
                   <Box>
                     {getBalance(pool[i].totalStaked, 1)} {symbol[i]} ($
                     {getBalanceUSD(pool[i].totalStaked, pool[i].price, 1)})

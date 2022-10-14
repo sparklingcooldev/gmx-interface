@@ -4,7 +4,13 @@ import React, { useEffect, useState } from "react";
 import { getMulticallContract, multicall } from "../utils/contracts";
 import ValutABI from "../abis/ValutABI.json";
 import ERC20ABI from "../abis/ERC20ABI.json";
-import { BTC_ADDR, ETH_ADDR, USDC_ADDR, VAULT_ADDR } from "../abis/address";
+import {
+  BTC_ADDR,
+  ETH_ADDR,
+  GDlptoken,
+  USDC_ADDR,
+  VAULT_ADDR,
+} from "../abis/address";
 import { useAddress } from "./web3Context";
 import { ethers } from "ethers";
 
@@ -45,6 +51,9 @@ export function LockInfoProvider({ children }) {
           name: "allowance",
           params: [account, VAULT_ADDR],
         },
+        { address: GDlptoken[0], name: "balanceOf", params: [account] },
+        { address: GDlptoken[1], name: "balanceOf", params: [account] },
+        { address: GDlptoken[2], name: "balanceOf", params: [account] },
       ];
       const _balances = await multicall(ERC20ABI, calls);
       calls = [];
@@ -67,6 +76,7 @@ export function LockInfoProvider({ children }) {
           stakedAmount: _stakedAmounts[i][0],
           allowance: _balances[i + 3][0] > ethers.utils.parseEther("10000"),
           ethBalance,
+          gdBalance: _balances[i + 6],
         });
       }
 
