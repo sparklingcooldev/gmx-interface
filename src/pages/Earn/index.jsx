@@ -18,6 +18,7 @@ import { ethers } from "ethers";
 const Earn = ({ setNotification }) => {
   const { pool, fetchData } = useTokenInfo();
   const { accountData, fetchAccountData } = useLockInfo();
+  console.log("accountData", accountData);
   const account = useAddress();
   const { connect, provider } = useWeb3Context();
   function onConnect() {
@@ -36,7 +37,7 @@ const Earn = ({ setNotification }) => {
   const [pending, setPending] = useState(false);
   const [isWETH, setIsWETH] = useState(false);
 
-  const decimals = [6, 18, 8, 0];
+  const decimals = [6, 18, 8, 18];
   const symbol = ["USDC", "ETH", "BTC", "GMD"];
   const fees = ["0.5", "0.25", "0.25", "0.0"];
   const addresses = [USDC_ADDR, ETH_ADDR, BTC_ADDR, USDC_ADDR];
@@ -59,7 +60,7 @@ const Earn = ({ setNotification }) => {
         if (!isWETH) {
           estimateGas = await valutContract.estimateGas.enterETH(curIndex, {
             value: maxPressed
-              ? accountData[curIndex].balance
+              ? accountData[curIndex].ethBalance
               : ethers.utils.parseUnits(amount, decimals[curIndex]),
           });
         } else
@@ -75,14 +76,16 @@ const Earn = ({ setNotification }) => {
           estimateGas = await valutContract.estimateGas.leaveETH(
             maxPressed
               ? accountData[curIndex].stakedAmount
-              : ethers.utils.parseUnits(amount, decimals[curIndex]),
+              : ethers.utils.parseUnits(amount, decimals[curIndex]) /
+                  pool[curIndex].GDpriceToStakedToken,
             curIndex
           );
         } else {
           estimateGas = await valutContract.estimateGas.leave(
             maxPressed
               ? accountData[curIndex].stakedAmount
-              : ethers.utils.parseUnits(amount, decimals[curIndex]),
+              : ethers.utils.parseUnits(amount, decimals[curIndex]) /
+                  pool[curIndex].GDpriceToStakedToken,
             curIndex
           );
         }
@@ -95,7 +98,7 @@ const Earn = ({ setNotification }) => {
         if (!isWETH) {
           ttx = await valutContract.enterETH(curIndex, {
             value: maxPressed
-              ? accountData[curIndex].ethbalance
+              ? accountData[curIndex].ethBalance
               : ethers.utils.parseUnits(amount, decimals[curIndex]),
             gasLimit: estimateGas.toString(),
           });
@@ -113,7 +116,8 @@ const Earn = ({ setNotification }) => {
           ttx = await valutContract.leaveETH(
             maxPressed
               ? accountData[curIndex].stakedAmount
-              : ethers.utils.parseUnits(amount, decimals[curIndex]),
+              : ethers.utils.parseUnits(amount, decimals[curIndex]) /
+                  pool[curIndex].GDpriceToStakedToken,
             curIndex,
             tx
           );
@@ -121,7 +125,8 @@ const Earn = ({ setNotification }) => {
           ttx = await valutContract.estimateGas.leave(
             maxPressed
               ? accountData[curIndex].stakedAmount
-              : ethers.utils.parseUnits(amount, decimals[curIndex]),
+              : ethers.utils.parseUnits(amount, decimals[curIndex]) /
+                  pool[curIndex].GDpriceToStakedToken,
             curIndex,
             tx
           );
@@ -178,21 +183,30 @@ const Earn = ({ setNotification }) => {
               <PanelBody>
                 <Box>
                   <Box color={"rgba(255, 255, 255, 0.7)"}>Price</Box>
-                  <Box>${numberWithCommas(data.price.toFixed(5))}</Box>
+                  <Box>${numberWithCommas(data.price.toFixed(2))}</Box>
                 </Box>
                 <Box>
                   <Box color={"rgba(255, 255, 255, 0.7)"}>Wallet</Box>
                   <Box>
-                    {getBalance(accountData[i].balance, i)} {symbol[i]} ($
-                    {getBalanceUSD(accountData[i].balance, i)})
+                    {getBalance(
+                      i === 1
+                        ? accountData[i].ethBalance
+                        : accountData[i].balance,
+                      i
+                    )}{" "}
+                    {symbol[i]} ($
+                    {getBalanceUSD(
+                      i === 1
+                        ? accountData[i].ethBalance
+                        : accountData[i].balance,
+                      i
+                    )}
+                    )
                   </Box>
                 </Box>
                 <Box>
-                  <Box color={"rgba(255, 255, 255, 0.7)"}>Staked</Box>
-                  <Box>
-                    {getBalance(accountData[i].stakedAmount, i)} {symbol[i]} ($
-                    {getBalanceUSD(accountData[i].stakedAmount, i)})
-                  </Box>
+                  <Box color={"rgba(255, 255, 255, 0.7)"}>APR</Box>
+                  <Box>{pool[i].apr}%</Box>
                 </Box>
               </PanelBody>
               <Divider />
@@ -203,8 +217,11 @@ const Earn = ({ setNotification }) => {
                 flexDirection={"column"}
               >
                 <Box>
-                  <Box color={"rgba(255, 255, 255, 0.7)"}>APR</Box>
-                  <Box>{pool[i].apr}%</Box>
+                  <Box color={"rgba(255, 255, 255, 0.7)"}>Staked</Box>
+                  <Box>
+                    {getBalance(accountData[i].stakedAmount, 1)} {symbol[i]} ($
+                    {getBalanceUSD(accountData[i].stakedAmount, 1)})
+                  </Box>
                 </Box>
                 {i === 3 ? (
                   <>
@@ -234,8 +251,8 @@ const Earn = ({ setNotification }) => {
                 <Box>
                   <Box color={"rgba(255, 255, 255, 0.7)"}>Total Staked</Box>
                   <Box>
-                    {getBalance(pool[i].totalStaked, i)} {symbol[i]} ($
-                    {getBalanceUSD(pool[i].totalStaked, i)})
+                    {getBalance(pool[i].totalStaked, 1)} {symbol[i]} ($
+                    {getBalanceUSD(pool[i].totalStaked, 1)})
                   </Box>
                 </Box>
                 <Box>

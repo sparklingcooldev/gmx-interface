@@ -87,6 +87,9 @@ export function TokenInfoProvider({ children }) {
         { address: VAULT_ADDR, params: [0], name: "poolInfo" },
         { address: VAULT_ADDR, params: [1], name: "poolInfo" },
         { address: VAULT_ADDR, params: [2], name: "poolInfo" },
+        { address: VAULT_ADDR, params: [0], name: "GDpriceToStakedtoken" },
+        { address: VAULT_ADDR, params: [1], name: "GDpriceToStakedtoken" },
+        { address: VAULT_ADDR, params: [2], name: "GDpriceToStakedtoken" },
       ];
       const result = await multicall(ValutABI, calls);
       setGLPInValut(result[0][0] / Math.pow(10, 18));
@@ -101,11 +104,11 @@ export function TokenInfoProvider({ children }) {
       const _prices = await multicall(PriceABI, calls);
       setGLPPrice(_prices[0][0] / Math.pow(10, 18));
       const USDCSAmount =
-        (result[2].totalStaked * _prices[1][0]) / Math.pow(10, 36);
+        (result[2].totalStaked * _prices[1][0]) / Math.pow(10, 48);
       const ETHSAmount =
         (result[3].totalStaked * _prices[2][0]) / Math.pow(10, 48);
       const BTCSAmount =
-        (result[4].totalStaked * _prices[3][0]) / Math.pow(10, 38);
+        (result[4].totalStaked * _prices[3][0]) / Math.pow(10, 48);
       let _totalUSDValuts = USDCSAmount + ETHSAmount + BTCSAmount;
       setTotalUSDValuts(_totalUSDValuts);
       setPool([
@@ -115,6 +118,7 @@ export function TokenInfoProvider({ children }) {
           weight: (USDCSAmount / _totalUSDValuts) * 100,
           apr: result[2].APR / 100,
           totalStaked: result[2].totalStaked,
+          GDpriceToStakedToken: result[5][0],
         },
         {
           price: _prices[2][0] / Math.pow(10, 30),
@@ -122,6 +126,7 @@ export function TokenInfoProvider({ children }) {
           weight: (ETHSAmount / _totalUSDValuts) * 100,
           apr: result[3].APR / 100,
           totalStaked: result[3].totalStaked,
+          GDpriceToStakedToken: result[6][0],
         },
         {
           price: _prices[3][0] / Math.pow(10, 30),
@@ -129,6 +134,7 @@ export function TokenInfoProvider({ children }) {
           weight: (BTCSAmount / _totalUSDValuts) * 100,
           apr: result[4].APR / 100,
           totalStaked: result[4].totalStaked,
+          GDpriceToStakedToken: result[7][0],
         },
         {
           price: 0,

@@ -65,7 +65,13 @@ const StakingModal = ({
   useEffect(() => {
     console.log(maxPressed);
 
-    if (Number(amount) > Number(balance) && !maxPressed) {
+    if (
+      Number(amount) >
+        Number(
+          type === 1 && symbol === "ETH" && !isWETH ? ethBalance : balance
+        ) &&
+      !maxPressed
+    ) {
       setInsufficient(true);
     } else setInsufficient(false);
   }, [maxPressed, balance, amount]);

@@ -78,7 +78,7 @@ export function numberWithCommas(x) {
       "." +
       strList[1]
     );
-  else return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
 export const priceFormat = (str) => {
