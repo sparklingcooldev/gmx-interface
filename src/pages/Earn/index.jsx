@@ -54,6 +54,8 @@ const Earn = ({ setNotification }) => {
     setPending(true);
     try {
       const valutContract = getVaultContract(provider.getSigner());
+      const rate =
+        ethers.utils.parseEther("1") / pool[curIndex].GDpriceToStakedToken;
       let estimateGas, ttx;
       console.log(curIndex);
       if (type === 1) {
@@ -72,22 +74,19 @@ const Earn = ({ setNotification }) => {
           );
       }
       if (type === 2) {
+        let total = Math.floor(
+          (maxPressed
+            ? accountData[curIndex].stakedAmount
+            : ethers.utils.parseUnits(amount, 18)) * rate
+        );
         if (!isWETH && curIndex === 1) {
           estimateGas = await valutContract.estimateGas.leaveETH(
-            ((maxPressed
-              ? accountData[curIndex].stakedAmount
-              : ethers.utils.parseUnits(amount, 18)) *
-              ethers.utils.parseEther("1")) /
-              pool[curIndex].GDpriceToStakedToken,
+            total.toString(),
             curIndex
           );
         } else {
           estimateGas = await valutContract.estimateGas.leave(
-            ((maxPressed
-              ? accountData[curIndex].stakedAmount
-              : ethers.utils.parseUnits(amount, 18)) *
-              ethers.utils.parseEther("1")) /
-              pool[curIndex].GDpriceToStakedToken,
+            total.toString(),
             curIndex
           );
         }
@@ -114,25 +113,15 @@ const Earn = ({ setNotification }) => {
           );
       }
       if (type === 2) {
+        let total = Math.floor(
+          (maxPressed
+            ? accountData[curIndex].stakedAmount
+            : ethers.utils.parseUnits(amount, 18)) * rate
+        );
         if (!isWETH && curIndex === 1) {
-          ttx = await valutContract.leaveETH(
-            ((maxPressed
-              ? accountData[curIndex].stakedAmount
-              : ethers.utils.parseEther(amount)) *
-              ethers.utils.parseEther("1")) /
-              pool[curIndex].GDpriceToStakedToken,
-            curIndex,
-            tx
-          );
+          ttx = await valutContract.leaveETH(total.toString(), curIndex, tx);
         } else {
-          ttx = await valutContract.estimateGas.leave(
-            ((maxPressed
-              ? accountData[curIndex].stakedAmount
-              : ethers.utils.parseEther(amount)) *
-              ethers.utils.parseEther("1")) /
-              pool[curIndex].GDpriceToStakedToken,
-            tx
-          );
+          ttx = await valutContract.leave(total.toString(), curIndex, tx);
         }
       }
       await ttx.wait();
