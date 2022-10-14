@@ -116,21 +116,21 @@ const Earn = ({ setNotification }) => {
       if (type === 2) {
         if (!isWETH && curIndex === 1) {
           ttx = await valutContract.leaveETH(
-            maxPressed
+            (maxPressed
               ? accountData[curIndex].stakedAmount
-              : (ethers.utils.parseEther(amount) *
-                  ethers.utils.parseEther("1")) /
-                  pool[curIndex].GDpriceToStakedToken,
+              : ethers.utils.parseEther(amount) *
+                ethers.utils.parseEther("1")) /
+              pool[curIndex].GDpriceToStakedToken,
             curIndex,
             tx
           );
         } else {
           ttx = await valutContract.estimateGas.leave(
-            maxPressed
+            (maxPressed
               ? accountData[curIndex].stakedAmount
-              : (ethers.utils.parseEther(amount) *
-                  ethers.utils.parseEther("1")) /
-                  pool[curIndex].GDpriceToStakedToken,
+              : ethers.utils.parseEther(amount) *
+                ethers.utils.parseEther("1")) /
+              pool[curIndex].GDpriceToStakedToken,
             tx
           );
         }
