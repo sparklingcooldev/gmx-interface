@@ -67,7 +67,7 @@ const Tokens = ({ setNotification }) => {
         <ArbitranSVG ml={"10px"} />
       </Box>
       <Box fontSize={"15px"} lineHeight={"21px"} color={"#b7b7bd"}>
-        Platform and GLP index tokens.
+        Platform and GMP index tokens.
       </Box>
       <Box
         display={"flex"}

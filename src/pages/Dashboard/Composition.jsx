@@ -42,7 +42,7 @@ const Stats = ({ setNotification }) => {
       {!md ? (
         <Panel width={"100%"} mt={"15px"} mb={"50px"}>
           <PanelHeader>
-            <Box>GLP Index Composition</Box>
+            <Box>GMP Index Composition</Box>
             <ArbitranSVG />
           </PanelHeader>
           <Divider />
