@@ -55,8 +55,9 @@ const Earn = ({ setNotification }) => {
     try {
       const valutContract = getVaultContract(provider.getSigner());
       let estimateGas, ttx;
+      console.log(curIndex);
       if (type === 1) {
-        if (!isWETH) {
+        if (!isWETH && curIndex === 1) {
           estimateGas = await valutContract.estimateGas.enterETH(curIndex, {
             value: maxPressed
               ? accountData[curIndex].ethBalance
@@ -71,7 +72,7 @@ const Earn = ({ setNotification }) => {
           );
       }
       if (type === 2) {
-        if (!isWETH) {
+        if (!isWETH && curIndex === 1) {
           estimateGas = await valutContract.estimateGas.leaveETH(
             maxPressed
               ? accountData[curIndex].stakedAmount
@@ -93,15 +94,15 @@ const Earn = ({ setNotification }) => {
       }
       console.log(estimateGas.toString());
       const tx = {
-        gasLimit: estimateGas.toString(),
+        gasLimit: Math.floor(estimateGas.toString() * 1.2),
       };
       if (type === 1) {
-        if (!isWETH) {
+        if (!isWETH && curIndex === 1) {
           ttx = await valutContract.enterETH(curIndex, {
             value: maxPressed
               ? accountData[curIndex].ethBalance
               : ethers.utils.parseUnits(amount, decimals[curIndex]),
-            gasLimit: estimateGas.toString(),
+            gasLimit: Math.floor(estimateGas.toString() * 1.2),
           });
         } else
           ttx = await valutContract.enter(
@@ -113,7 +114,7 @@ const Earn = ({ setNotification }) => {
           );
       }
       if (type === 2) {
-        if (!isWETH) {
+        if (!isWETH && curIndex === 1) {
           ttx = await valutContract.leaveETH(
             maxPressed
               ? accountData[curIndex].stakedAmount
