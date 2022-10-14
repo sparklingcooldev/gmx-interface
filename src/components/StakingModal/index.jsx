@@ -5,6 +5,11 @@ import { AiOutlineClose } from "react-icons/ai";
 import Button from "../Button";
 import { useState } from "react";
 import { useEffect } from "react";
+import { VAULT_ADDR } from "../../abis/address";
+import { getTokenContract } from "../../utils/contracts";
+import { useWeb3Context } from "../../hooks/web3Context";
+import useLockInfo from "../../hooks/useLockInfo";
+import { figureError } from "../../utils/functions";
 
 const StakingModal = ({
   open,
@@ -16,10 +21,46 @@ const StakingModal = ({
   maxPressed,
   setMaxPressed,
   pending,
+  setPending,
   symbol,
   onConfirm,
+  allowance,
+  address,
+  setNotification,
+  isWETH,
+  setIsWETH,
+  ethBalance,
 }) => {
   const [insufficient, setInsufficient] = useState(false);
+  const { provider } = useWeb3Context();
+  const { fetchAccountData } = useLockInfo();
+
+  const onApprove = async (i) => {
+    setPending(true);
+    try {
+      const tokenContract = getTokenContract(address, provider.getSigner());
+      const estimateGas = await tokenContract.estimateGas.approve(
+        VAULT_ADDR,
+        "115792089237316195423570985008687907853269984665640564039457584007913129639935"
+      );
+      console.log(estimateGas.toString());
+
+      const tx = {
+        gasLimit: estimateGas.toString(),
+      };
+      const approveTx = await tokenContract.approve(
+        VAULT_ADDR,
+        "115792089237316195423570985008687907853269984665640564039457584007913129639935",
+        tx
+      );
+      await approveTx.wait();
+      fetchAccountData();
+    } catch (error) {
+      console.log(error);
+      figureError(error, setNotification);
+    }
+    setPending(false);
+  };
 
   useEffect(() => {
     console.log(maxPressed);
@@ -49,7 +90,11 @@ const StakingModal = ({
                   setAmount(balance);
                 }}
               >
-                Max: {balance.toFixed(4)}
+                Max:{" "}
+                {(type === 1 && symbol === "ETH" && !isWETH
+                  ? ethBalance
+                  : balance
+                ).toFixed(4)}
               </MaxButton>
             </Box>
             <Box>
@@ -62,7 +107,7 @@ const StakingModal = ({
                 }}
                 placeholder={"0.00"}
               />
-              <Box>{symbol}</Box>
+              <Box>{isWETH ? "WETH" : symbol}</Box>
             </Box>
           </InputSection>
           {insufficient ? (
@@ -78,22 +123,69 @@ const StakingModal = ({
           ) : (
             ""
           )}
+          {symbol === "ETH" ? (
+            <CheckBoxGroup>
+              <Box onClick={() => setIsWETH(false)}>
+                <input type={"radio"} checked={!isWETH} />
+                <Box>ETH</Box>
+              </Box>
+              <Box onClick={() => setIsWETH(true)}>
+                <input type={"radio"} checked={isWETH} />
+                <Box>WETH</Box>
+              </Box>
+            </CheckBoxGroup>
+          ) : (
+            ""
+          )}
           <Box>
-            <Button
-              type={"secondary"}
-              width={"100%"}
-              height={"47px"}
-              disabled={pending || insufficient || !Number(amount)}
-              onClick={() => onConfirm()}
-            >
-              Confirm
-            </Button>
+            {allowance || type === 2 || (symbol === "ETH" && !isWETH) ? (
+              <Button
+                type={"secondary"}
+                width={"100%"}
+                height={"47px"}
+                disabled={pending || insufficient || !Number(amount)}
+                onClick={() => onConfirm()}
+              >
+                Confirm
+              </Button>
+            ) : (
+              <Button
+                type={"secondary"}
+                width={"100%"}
+                height={"47px"}
+                disabled={pending}
+                onClick={() => onApprove()}
+              >
+                Approve
+              </Button>
+            )}
           </Box>
         </DialogBody>
       </Panel>
     </Dialog>
   );
 };
+
+const CheckBoxGroup = styled(Box)`
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 15px;
+  > div {
+    display: flex;
+    align-items: center;
+    margin-right: 10px;
+    cursor: pointer;
+    > input {
+      cursor: pointer;
+    }
+    > div {
+      color: white;
+      margin-left: 5px;
+      font-size: 12px;
+      margin-top: -2px;
+    }
+  }
+`;
 
 const MaxButton = styled(Box)`
   cursor: pointer;

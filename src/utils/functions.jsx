@@ -71,7 +71,14 @@ export const figureError = (error, setNotification) => {
 };
 
 export function numberWithCommas(x) {
-  return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  const strList = x.split(".");
+  if (strList.length > 1)
+    return (
+      strList[0].toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+      "." +
+      strList[1]
+    );
+  else return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
 export const priceFormat = (str) => {

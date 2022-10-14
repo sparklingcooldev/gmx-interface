@@ -2,6 +2,7 @@
 /* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from "react";
 import {
+  getMulticallContract,
   getPriceContract,
   getVaultContract,
   multicall,
@@ -36,10 +37,10 @@ let dataid = null;
 export function LockInfoProvider({ children }) {
   const account = useAddress();
   const [accountData, setAccountData] = useState([
-    { balance: 0, stakedAmount: 0, allowance: false },
-    { balance: 0, stakedAmount: 0, allowance: false },
-    { balance: 0, stakedAmount: 0, allowance: false },
-    { balance: 0, stakedAmount: 0, allowance: false },
+    { balance: 0, stakedAmount: 0, allowance: false, ethBalance: 0 },
+    { balance: 0, stakedAmount: 0, allowance: false, ethBalance: 0 },
+    { balance: 0, stakedAmount: 0, allowance: false, ethBalance: 0 },
+    { balance: 0, stakedAmount: 0, allowance: false, ethBalance: 0 },
   ]);
   async function fetchAccountData() {
     try {
@@ -78,7 +79,9 @@ export function LockInfoProvider({ children }) {
         }
       }
       const _stakedAmounts = await multicall(ValutABI, calls);
-      console.log(_stakedAmounts);
+      const multicallContract = getMulticallContract();
+      const ethBalance = await multicallContract.getEthBalance(account);
+      console.log(ethBalance);
       let temp = [];
       for (let i = 0; i < 3; i++) {
         temp.push({
@@ -87,6 +90,7 @@ export function LockInfoProvider({ children }) {
             ? _stakedAmounts[indexes.indexOf(i)][0]
             : 0,
           allowance: _balances[i + 6][0] > ethers.utils.parseEther("10000"),
+          ethBalance,
         });
       }
 

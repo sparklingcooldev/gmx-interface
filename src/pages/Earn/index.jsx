@@ -34,48 +34,20 @@ const Earn = ({ setNotification }) => {
   const [amount, setAmount] = useState(0);
   const [maxPressed, setMaxPresssed] = useState(false);
   const [pending, setPending] = useState(false);
+  const [isWETH, setIsWETH] = useState(false);
+
   const decimals = [6, 18, 8, 0];
   const symbol = ["USDC", "ETH", "BTC", "GMD"];
   const fees = ["0.5", "0.25", "0.25", "0.0"];
   const addresses = [USDC_ADDR, ETH_ADDR, BTC_ADDR, USDC_ADDR];
 
   const getBalance = (amount, i) => {
-    return numberWithCommas((amount / Math.pow(10, decimals[i])).toFixed(2));
+    return numberWithCommas((amount / Math.pow(10, decimals[i])).toFixed(5));
   };
   const getBalanceUSD = (amount, i) => {
     return numberWithCommas(
-      ((pool[i].price * amount) / Math.pow(10, decimals[i])).toFixed(2)
+      ((pool[i].price * amount) / Math.pow(10, decimals[i])).toFixed(5)
     );
-  };
-
-  const onApprove = async (i) => {
-    setPending(true);
-    try {
-      const tokenContract = getTokenContract(
-        addresses[i],
-        provider.getSigner()
-      );
-      const estimateGas = await tokenContract.estimateGas.approve(
-        VAULT_ADDR,
-        "115792089237316195423570985008687907853269984665640564039457584007913129639935"
-      );
-      console.log(estimateGas.toString());
-
-      const tx = {
-        gasLimit: estimateGas.toString(),
-      };
-      const approveTx = await tokenContract.approve(
-        VAULT_ADDR,
-        "115792089237316195423570985008687907853269984665640564039457584007913129639935",
-        tx
-      );
-      await approveTx.wait();
-      fetchAccountData();
-    } catch (error) {
-      console.log(error);
-      figureError(error, setNotification);
-    }
-    setPending(false);
   };
 
   const onConfirm = async (i) => {
@@ -84,42 +56,76 @@ const Earn = ({ setNotification }) => {
       const valutContract = getVaultContract(provider.getSigner());
       let estimateGas, ttx;
       if (type === 1) {
-        estimateGas = await valutContract.estimateGas.enter(
-          maxPressed
-            ? accountData[curIndex].balance
-            : ethers.utils.parseUnits(amount, decimals[curIndex]),
-          curIndex
-        );
+        if (!isWETH) {
+          estimateGas = await valutContract.estimateGas.enterETH(curIndex, {
+            value: maxPressed
+              ? accountData[curIndex].balance
+              : ethers.utils.parseUnits(amount, decimals[curIndex]),
+          });
+        } else
+          estimateGas = await valutContract.estimateGas.enter(
+            maxPressed
+              ? accountData[curIndex].balance
+              : ethers.utils.parseUnits(amount, decimals[curIndex]),
+            curIndex
+          );
       }
       if (type === 2) {
-        estimateGas = await valutContract.estimateGas.leave(
-          maxPressed
-            ? accountData[curIndex].stakedAmount
-            : ethers.utils.parseUnits(amount, decimals[curIndex]),
-          curIndex
-        );
+        if (!isWETH) {
+          estimateGas = await valutContract.estimateGas.leaveETH(
+            maxPressed
+              ? accountData[curIndex].stakedAmount
+              : ethers.utils.parseUnits(amount, decimals[curIndex]),
+            curIndex
+          );
+        } else {
+          estimateGas = await valutContract.estimateGas.leave(
+            maxPressed
+              ? accountData[curIndex].stakedAmount
+              : ethers.utils.parseUnits(amount, decimals[curIndex]),
+            curIndex
+          );
+        }
       }
       console.log(estimateGas.toString());
       const tx = {
         gasLimit: estimateGas.toString(),
       };
       if (type === 1) {
-        ttx = await valutContract.enter(
-          maxPressed
-            ? accountData[curIndex].balance
-            : ethers.utils.parseUnits(amount, decimals[curIndex]),
-          curIndex,
-          tx
-        );
+        if (!isWETH) {
+          ttx = await valutContract.enterETH(curIndex, {
+            value: maxPressed
+              ? accountData[curIndex].ethbalance
+              : ethers.utils.parseUnits(amount, decimals[curIndex]),
+            gasLimit: estimateGas.toString(),
+          });
+        } else
+          ttx = await valutContract.enter(
+            maxPressed
+              ? accountData[curIndex].balance
+              : ethers.utils.parseUnits(amount, decimals[curIndex]),
+            curIndex,
+            tx
+          );
       }
       if (type === 2) {
-        ttx = await valutContract.leave(
-          maxPressed
-            ? accountData[curIndex].stakedAmount
-            : ethers.utils.parseUnits(amount, decimals[curIndex]),
-          curIndex,
-          tx
-        );
+        if (!isWETH) {
+          ttx = await valutContract.leaveETH(
+            maxPressed
+              ? accountData[curIndex].stakedAmount
+              : ethers.utils.parseUnits(amount, decimals[curIndex]),
+            curIndex,
+            tx
+          );
+        } else {
+          ttx = await valutContract.estimateGas.leave(
+            maxPressed
+              ? accountData[curIndex].stakedAmount
+              : ethers.utils.parseUnits(amount, decimals[curIndex]),
+            curIndex,
+            tx
+          );
+        }
       }
       await ttx.wait();
       fetchAccountData();
@@ -130,6 +136,7 @@ const Earn = ({ setNotification }) => {
     }
     setPending(false);
   };
+
   return (
     <StyledContainer>
       <StakingModal
@@ -144,11 +151,20 @@ const Earn = ({ setNotification }) => {
             : accountData[curIndex].stakedAmount /
               Math.pow(10, decimals[curIndex])
         }
+        ethBalance={
+          accountData[curIndex].ethBalance / Math.pow(10, decimals[curIndex])
+        }
         setMaxPressed={setMaxPresssed}
         maxPressed={maxPressed}
         pending={pending}
+        setPending={setPending}
         onConfirm={onConfirm}
         symbol={symbol[curIndex]}
+        allowance={accountData[curIndex].allowance}
+        setNotification={setNotification}
+        address={addresses[curIndex]}
+        isWETH={isWETH}
+        setIsWETH={setIsWETH}
       />
       <Box fontSize={"34px"} mb={"8px"} fontWeight={"bold"}>
         Earn
@@ -162,7 +178,7 @@ const Earn = ({ setNotification }) => {
               <PanelBody>
                 <Box>
                   <Box color={"rgba(255, 255, 255, 0.7)"}>Price</Box>
-                  <Box>${numberWithCommas(data.price.toFixed(2))}</Box>
+                  <Box>${numberWithCommas(data.price.toFixed(5))}</Box>
                 </Box>
                 <Box>
                   <Box color={"rgba(255, 255, 255, 0.7)"}>Wallet</Box>
@@ -237,18 +253,6 @@ const Earn = ({ setNotification }) => {
                     onClick={() => onConnect()}
                   >
                     Connect Wallet
-                  </Button>
-                ) : !accountData[i].allowance ? (
-                  <Button
-                    type={"primary"}
-                    width={i === 1 ? "130px" : "90px"}
-                    height={"36px"}
-                    disabled={pending}
-                    onClick={() => {
-                      onApprove(i);
-                    }}
-                  >
-                    {i === 1 ? "Approve WETH" : "Approve"}
                   </Button>
                 ) : (
                   <>

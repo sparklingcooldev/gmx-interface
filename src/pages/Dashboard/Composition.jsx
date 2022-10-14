@@ -14,25 +14,25 @@ const Stats = ({ setNotification }) => {
       url: "/icons/usdc.svg",
       name: "USDC",
       symbol: "USDC",
-      price: `$${numberWithCommas(pool[0].price.toFixed(2))}`,
-      pool: `$${numberWithCommas(pool[0].pool.toFixed(2))}`,
-      weight: `${numberWithCommas(pool[0].weight.toFixed(2))}%`,
+      price: `$${numberWithCommas(pool[0].price.toFixed(5))}`,
+      pool: `$${numberWithCommas(pool[0].pool.toFixed(5))}`,
+      weight: `${numberWithCommas(pool[0].weight.toFixed(5))}%`,
     },
     {
       url: "/icons/eth.svg",
       name: "Ethereum",
       symbol: "ETH",
-      price: `$${numberWithCommas(pool[1].price.toFixed(2))}`,
-      pool: `$${numberWithCommas(pool[1].pool.toFixed(2))}`,
-      weight: `${numberWithCommas(pool[1].weight.toFixed(2))}%`,
+      price: `$${numberWithCommas(pool[1].price.toFixed(5))}`,
+      pool: `$${numberWithCommas(pool[1].pool.toFixed(5))}`,
+      weight: `${numberWithCommas(pool[1].weight.toFixed(5))}%`,
     },
     {
       url: "/icons/bitcoin.svg",
       name: "Bitcoin",
       symbol: "BTC",
-      price: `$${numberWithCommas(pool[2].price.toFixed(2))}`,
-      pool: `$${numberWithCommas(pool[2].pool.toFixed(2))}`,
-      weight: `${numberWithCommas(pool[2].weight.toFixed(2))}%`,
+      price: `$${numberWithCommas(pool[2].price.toFixed(5))}`,
+      pool: `$${numberWithCommas(pool[2].pool.toFixed(5))}`,
+      weight: `${numberWithCommas(pool[2].weight.toFixed(5))}%`,
     },
   ];
 
@@ -42,7 +42,7 @@ const Stats = ({ setNotification }) => {
       {!md ? (
         <Panel width={"100%"} mt={"15px"} mb={"50px"}>
           <PanelHeader>
-            <Box>GMP Index Composition</Box>
+            <Box>GMD index Composition</Box>
             <ArbitranSVG />
           </PanelHeader>
           <Divider />

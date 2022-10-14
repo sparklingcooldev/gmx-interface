@@ -52,10 +52,10 @@ const Tokens = ({ setNotification }) => {
 
   const md = useMediaQuery("(max-width : 1100px)");
   const GMD = [
-    { text: "Price", value: "$0.00" },
+    { text: "Price", value: "$0.00000" },
     { text: "Supply", value: 0 },
-    { text: "Total Staked", value: "$0.00" },
-    { text: "Market Cap", value: "$0.00" },
+    { text: "Total Staked", value: "$0.00000" },
+    { text: "Market Cap", value: "$0.00000" },
   ];
 
   return (
@@ -67,7 +67,7 @@ const Tokens = ({ setNotification }) => {
         <ArbitranSVG ml={"10px"} />
       </Box>
       <Box fontSize={"15px"} lineHeight={"21px"} color={"#b7b7bd"}>
-        Platform and GMP index tokens.
+        Platform and GMD index tokens.
       </Box>
       <Box
         display={"flex"}

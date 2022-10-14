@@ -4,6 +4,7 @@
 import { Box, useMediaQuery } from "@mui/material";
 import styled from "styled-components";
 import useTokenInfo from "../../hooks/useTokenInfo";
+import { numberWithCommas } from "../../utils/functions";
 
 const Stats = ({ setNotification }) => {
   const md = useMediaQuery("(max-width : 900px)");
@@ -65,7 +66,7 @@ const Stats = ({ setNotification }) => {
                   lineHeight={"130%"}
                 >
                   <Box color={"rgba(255, 255, 255, 0.7)"}>{data.text}</Box>
-                  <Box>${data.value.toFixed(2)}</Box>
+                  <Box>${numberWithCommas(data.value.toFixed(5))}</Box>
                 </Box>
               );
             })}
@@ -83,7 +84,7 @@ const Stats = ({ setNotification }) => {
                   lineHeight={"130%"}
                 >
                   <Box color={"rgba(255, 255, 255, 0.7)"}>{data.text}</Box>
-                  <Box>${data.value.toFixed(2)}</Box>
+                  <Box>${data.value.toFixed(5)}</Box>
                 </Box>
               );
             })}
