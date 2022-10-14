@@ -87,7 +87,11 @@ const StakingModal = ({
               <MaxButton
                 onClick={() => {
                   setMaxPressed(true);
-                  setAmount(balance);
+                  setAmount(
+                    type === 1 && symbol === "ETH" && !isWETH
+                      ? ethBalance
+                      : balance
+                  );
                 }}
               >
                 Max:{" "}
