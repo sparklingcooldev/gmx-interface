@@ -94,9 +94,10 @@ const StakingModal = ({
                 onClick={() => {
                   setMaxPressed(true);
                   setAmount(
-                    type === 1 && symbol === "ETH" && !isWETH
+                    (type === 1 && symbol === "ETH" && !isWETH
                       ? ethBalance
                       : balance
+                    ).toFixed(6)
                   );
                 }}
               >

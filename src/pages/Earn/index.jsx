@@ -18,7 +18,6 @@ import { ethers } from "ethers";
 const Earn = ({ setNotification }) => {
   const { pool, fetchData } = useTokenInfo();
   const { accountData, fetchAccountData } = useLockInfo();
-  console.log("accountData", accountData);
   const account = useAddress();
   const { connect, provider } = useWeb3Context();
   function onConnect() {
@@ -45,9 +44,9 @@ const Earn = ({ setNotification }) => {
   const getBalance = (amount, i) => {
     return numberWithCommas((amount / Math.pow(10, decimals[i])).toFixed(5));
   };
-  const getBalanceUSD = (amount, i) => {
+  const getBalanceUSD = (amount, price, i) => {
     return numberWithCommas(
-      ((pool[i].price * amount) / Math.pow(10, decimals[i])).toFixed(5)
+      ((price * amount) / Math.pow(10, decimals[i])).toFixed(5)
     );
   };
 
@@ -76,7 +75,8 @@ const Earn = ({ setNotification }) => {
           estimateGas = await valutContract.estimateGas.leaveETH(
             maxPressed
               ? accountData[curIndex].stakedAmount
-              : ethers.utils.parseUnits(amount, decimals[curIndex]) /
+              : (ethers.utils.parseUnits(amount, 18) *
+                  ethers.utils.parseEther("1")) /
                   pool[curIndex].GDpriceToStakedToken,
             curIndex
           );
@@ -84,7 +84,8 @@ const Earn = ({ setNotification }) => {
           estimateGas = await valutContract.estimateGas.leave(
             maxPressed
               ? accountData[curIndex].stakedAmount
-              : ethers.utils.parseUnits(amount, decimals[curIndex]) /
+              : (ethers.utils.parseUnits(amount, 18) *
+                  ethers.utils.parseEther("1")) /
                   pool[curIndex].GDpriceToStakedToken,
             curIndex
           );
@@ -116,7 +117,8 @@ const Earn = ({ setNotification }) => {
           ttx = await valutContract.leaveETH(
             maxPressed
               ? accountData[curIndex].stakedAmount
-              : ethers.utils.parseUnits(amount, decimals[curIndex]) /
+              : (ethers.utils.parseEther(amount) *
+                  ethers.utils.parseEther("1")) /
                   pool[curIndex].GDpriceToStakedToken,
             curIndex,
             tx
@@ -125,9 +127,9 @@ const Earn = ({ setNotification }) => {
           ttx = await valutContract.estimateGas.leave(
             maxPressed
               ? accountData[curIndex].stakedAmount
-              : ethers.utils.parseUnits(amount, decimals[curIndex]) /
+              : (ethers.utils.parseEther(amount) *
+                  ethers.utils.parseEther("1")) /
                   pool[curIndex].GDpriceToStakedToken,
-            curIndex,
             tx
           );
         }
@@ -153,12 +155,9 @@ const Earn = ({ setNotification }) => {
         balance={
           type === 1
             ? accountData[curIndex].balance / Math.pow(10, decimals[curIndex])
-            : accountData[curIndex].stakedAmount /
-              Math.pow(10, decimals[curIndex])
+            : accountData[curIndex].stakedAmount / Math.pow(10, 18)
         }
-        ethBalance={
-          accountData[curIndex].ethBalance / Math.pow(10, decimals[curIndex])
-        }
+        ethBalance={accountData[curIndex].ethBalance / Math.pow(10, 18)}
         setMaxPressed={setMaxPresssed}
         maxPressed={maxPressed}
         pending={pending}
@@ -199,6 +198,7 @@ const Earn = ({ setNotification }) => {
                       i === 1
                         ? accountData[i].ethBalance
                         : accountData[i].balance,
+                      pool[i].price,
                       i
                     )}
                     )
@@ -220,7 +220,12 @@ const Earn = ({ setNotification }) => {
                   <Box color={"rgba(255, 255, 255, 0.7)"}>Staked</Box>
                   <Box>
                     {getBalance(accountData[i].stakedAmount, 1)} {symbol[i]} ($
-                    {getBalanceUSD(accountData[i].stakedAmount, 1)})
+                    {getBalanceUSD(
+                      accountData[i].stakedAmount,
+                      pool[i].price,
+                      1
+                    )}
+                    )
                   </Box>
                 </Box>
                 {i === 3 ? (
@@ -252,7 +257,7 @@ const Earn = ({ setNotification }) => {
                   <Box color={"rgba(255, 255, 255, 0.7)"}>Total Staked</Box>
                   <Box>
                     {getBalance(pool[i].totalStaked, 1)} {symbol[i]} ($
-                    {getBalanceUSD(pool[i].totalStaked, 1)})
+                    {getBalanceUSD(pool[i].totalStaked, pool[i].price, 1)})
                   </Box>
                 </Box>
                 <Box>
