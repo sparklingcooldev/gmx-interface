@@ -51,7 +51,12 @@ const Tokens = ({ setNotification }) => {
   };
 
   const md = useMediaQuery("(max-width : 1100px)");
-  const sm = useMediaQuery("(max-width : 660px)");
+  const GMD = [
+    { text: "Price", value: "$0.00" },
+    { text: "Supply", value: 0 },
+    { text: "Total Staked", value: "$0.00" },
+    { text: "Market Cap", value: "$0.00" },
+  ];
 
   return (
     <Box mt={"31px"}>
@@ -75,23 +80,23 @@ const Tokens = ({ setNotification }) => {
             <PanelHeader>
               <GMXSVG mr={"8px"} />
               <Box>
-                <Box lineHeight={"130%"}>GMX</Box>
+                <Box lineHeight={"130%"}>GMD</Box>
                 <Box fontSize={"12px"} color={"#a9a9b0"} lineHeight={"130%"}>
-                  GMX
+                  GMD
                 </Box>
               </Box>
             </PanelHeader>
             <Divider />
             <PanelBody>
-              {["", "", "", ""].map((data) => {
+              {GMD.map((data) => {
                 return (
                   <Box
                     display={"flex"}
                     justifyContent={"space-between"}
                     lineHeight={"19px"}
                   >
-                    <Box color={"rgba(255, 255, 255, 0.7)"}>AUM</Box>
-                    <Box>$632,428,439</Box>
+                    <Box color={"rgba(255, 255, 255, 0.7)"}>{data.text}</Box>
+                    <Box>{data.value}</Box>
                   </Box>
                 );
               })}
@@ -161,15 +166,15 @@ const Tokens = ({ setNotification }) => {
             </PanelHeader>
             <Divider />
             <PanelBody>
-              {["", "", "", "", ""].map((data) => {
+              {GMD.map((data) => {
                 return (
                   <Box
                     display={"flex"}
                     justifyContent={"space-between"}
                     lineHeight={"19px"}
                   >
-                    <Box color={"rgba(255, 255, 255, 0.7)"}>AUM</Box>
-                    <Box>$632,428,439</Box>
+                    <Box color={"rgba(255, 255, 255, 0.7)"}>{data.text}</Box>
+                    <Box>{data.value}</Box>
                   </Box>
                 );
               })}
@@ -288,8 +293,8 @@ const Panel = styled(Box)`
   }
   @media screen and (max-width: 660px) {
     flex-direction: column;
-    >div:nth-child(1){
-      max-width : 100%;
+    > div:nth-child(1) {
+      max-width: 100%;
     }
   }
 `;

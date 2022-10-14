@@ -16,7 +16,6 @@ function App() {
   const { connect, hasCachedProvider } = useWeb3Context();
 
   const [notification, setNotification] = useState(null);
-  const [hamburgeropen, setHamburgerOpen] = useState(false);
 
   useEffect(() => {
     if (hasCachedProvider()) {

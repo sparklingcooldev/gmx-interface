@@ -1,8 +1,7 @@
 /* eslint-disable jsx-a11y/alt-text */
 import React from "react";
 import styled from "styled-components";
-import { Box, useMediaQuery } from "@mui/material";
-import Button from "../Button";
+import { Box } from "@mui/material";
 
 const Footer = () => {
   const socials = [

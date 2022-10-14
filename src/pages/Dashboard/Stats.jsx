@@ -3,9 +3,29 @@
 /* eslint-disable jsx-a11y/alt-text */
 import { Box, useMediaQuery } from "@mui/material";
 import styled from "styled-components";
+import useTokenInfo from "../../hooks/useTokenInfo";
 
 const Stats = ({ setNotification }) => {
   const md = useMediaQuery("(max-width : 900px)");
+  const { totalUSDValuts, GLPinVault, GLPPrice, totalFees, GLPbackingNeeded } =
+    useTokenInfo();
+
+  const overviews = [
+    {
+      text: "AUM",
+      value: totalUSDValuts,
+    },
+    {
+      text: "GLP managed",
+      value: GLPPrice * GLPinVault,
+    },
+    {
+      text: "Total Fees",
+      value: totalFees,
+    },
+  ];
+
+  const assets = [{ text: "GLP backing needed", value: GLPbackingNeeded }];
   return (
     <>
       <Box display={"flex"} alignItems={"center"}>
@@ -36,33 +56,34 @@ const Stats = ({ setNotification }) => {
           <PanelHeader>Overview</PanelHeader>
           <Divider />
           <PanelBody>
-            {["", "", "", "", ""].map((data) => {
+            {overviews.map((data, i) => {
               return (
                 <Box
+                  key={i}
                   display={"flex"}
                   justifyContent={"space-between"}
                   lineHeight={"130%"}
                 >
-                  <Box color={"rgba(255, 255, 255, 0.7)"}>AUM</Box>
-                  <Box>$632,428,439</Box>
+                  <Box color={"rgba(255, 255, 255, 0.7)"}>{data.text}</Box>
+                  <Box>${data.value.toFixed(2)}</Box>
                 </Box>
               );
             })}
           </PanelBody>
         </Panel>
         <Panel mt={md ? "15px" : 0}>
-          <PanelHeader>Total Stats</PanelHeader>
+          <PanelHeader>Asset stats</PanelHeader>
           <Divider />
           <PanelBody>
-            {["", "", ""].map((data) => {
+            {assets.map((data) => {
               return (
                 <Box
                   display={"flex"}
                   justifyContent={"space-between"}
                   lineHeight={"130%"}
                 >
-                  <Box color={"rgba(255, 255, 255, 0.7)"}>Total Fees</Box>
-                  <Box>$632,428,439</Box>
+                  <Box color={"rgba(255, 255, 255, 0.7)"}>{data.text}</Box>
+                  <Box>${data.value.toFixed(2)}</Box>
                 </Box>
               );
             })}

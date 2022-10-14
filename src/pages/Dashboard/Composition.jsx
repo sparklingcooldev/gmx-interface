@@ -3,35 +3,36 @@
 /* eslint-disable jsx-a11y/alt-text */
 import { Box, useMediaQuery } from "@mui/material";
 import styled from "styled-components";
+import useTokenInfo from "../../hooks/useTokenInfo";
+import { numberWithCommas } from "../../utils/functions";
 
 const Stats = ({ setNotification }) => {
+  const { pool } = useTokenInfo();
+
   const coins = [
     {
-      url: "/icons/eth.svg",
-      name: "Ethereum",
-      symbol: "ETH",
-      price: "$1292.53",
-      pool: "$107,576,357",
-      weight: "29.39% / 33.00%",
-      utilization: "22.87%",
+      url: "/icons/usdc.svg",
+      name: "USDC",
+      symbol: "USDC",
+      price: `$${numberWithCommas(pool[0].price.toFixed(2))}`,
+      pool: `$${numberWithCommas(pool[0].pool.toFixed(2))}`,
+      weight: `${numberWithCommas(pool[0].weight.toFixed(2))}%`,
     },
     {
       url: "/icons/eth.svg",
       name: "Ethereum",
       symbol: "ETH",
-      price: "$1292.53",
-      pool: "$107,576,357",
-      weight: "29.39% / 33.00%",
-      utilization: "22.87%",
+      price: `$${numberWithCommas(pool[1].price.toFixed(2))}`,
+      pool: `$${numberWithCommas(pool[1].pool.toFixed(2))}`,
+      weight: `${numberWithCommas(pool[1].weight.toFixed(2))}%`,
     },
     {
-      url: "/icons/eth.svg",
-      name: "Ethereum",
-      symbol: "ETH",
-      price: "$1292.53",
-      pool: "$107,576,357",
-      weight: "29.39% / 33.00%",
-      utilization: "22.87%",
+      url: "/icons/bitcoin.svg",
+      name: "Bitcoin",
+      symbol: "BTC",
+      price: `$${numberWithCommas(pool[2].price.toFixed(2))}`,
+      pool: `$${numberWithCommas(pool[2].pool.toFixed(2))}`,
+      weight: `${numberWithCommas(pool[2].weight.toFixed(2))}%`,
     },
   ];
 
@@ -51,7 +52,6 @@ const Stats = ({ setNotification }) => {
               <Box maxWidth={"110px"}>PRICE</Box>
               <Box maxWidth={"200px"}>POOL</Box>
               <Box maxWidth={"200px"}>WEIGHT</Box>
-              <Box maxWidth={"170px"}>UTILIZATION</Box>
             </TableHeader>
             {coins.map((data) => {
               return (
@@ -78,9 +78,6 @@ const Stats = ({ setNotification }) => {
                   </Box>
                   <Box color={"#ffffffde!important"} maxWidth={"200px"}>
                     {data.weight}
-                  </Box>
-                  <Box color={"#ffffffde!important"} maxWidth={"170px"}>
-                    {data.utilization}
                   </Box>
                 </TableHeader>
               );
@@ -126,10 +123,6 @@ const Stats = ({ setNotification }) => {
                   <Box>
                     <Box color={"rgba(255, 255, 255, 0.7)"}>Weight</Box>
                     <Box>{data.weight}</Box>
-                  </Box>
-                  <Box>
-                    <Box color={"rgba(255, 255, 255, 0.7)"}>Utilization</Box>
-                    <Box>{data.utilization}</Box>
                   </Box>
                 </PanelBody>
               </Panel>

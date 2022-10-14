@@ -1,41 +1,91 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { useState } from "react";
-import { Box, Dialog, useMediaQuery, Slider } from "@mui/material";
+import { Box, Dialog } from "@mui/material";
 import styled from "styled-components";
 import { AiOutlineClose } from "react-icons/ai";
 import Button from "../Button";
+import { useState } from "react";
+import { useEffect } from "react";
 
-const StakingModal = ({ open, setOpen, type, amount, setAmount }) => {
-  const [active, setActive] = useState(1);
+const StakingModal = ({
+  open,
+  setOpen,
+  type,
+  amount,
+  setAmount,
+  balance,
+  maxPressed,
+  setMaxPressed,
+  pending,
+  symbol,
+  onConfirm,
+}) => {
   const [insufficient, setInsufficient] = useState(false);
 
-  const sm = useMediaQuery("(max-width : 450px)");
+  useEffect(() => {
+    console.log(maxPressed);
+
+    if (Number(amount) > Number(balance) && !maxPressed) {
+      setInsufficient(true);
+    } else setInsufficient(false);
+  }, [maxPressed, balance, amount]);
 
   return (
     <Dialog open={open} onClose={() => setOpen(false)}>
       <Panel>
         <DialogHeader>
-          <Box>{type === 1 ? "Stake" : "Unstake"} GMX</Box>
+          <Box>
+            {type === 1 ? "Stake" : "Unstake"} {symbol}
+          </Box>
           <AiOutlineClose cursor={"pointer"} onClick={() => setOpen(false)} />
         </DialogHeader>
         <Divider />
         <DialogBody>
           <InputSection>
             <Box>
-              <Box>Stake</Box>
-              <Box>Max: 0.0000</Box>
+              <Box>{type === 1 ? "Stake" : "Unstake"}</Box>
+              <MaxButton
+                onClick={() => {
+                  setMaxPressed(true);
+                  setAmount(balance);
+                }}
+              >
+                Max: {balance.toFixed(4)}
+              </MaxButton>
             </Box>
             <Box>
               <input
                 type={"text"}
                 value={amount}
-                onChange={(e) => setAmount(e.target.value)}
+                onChange={(e) => {
+                  setAmount(e.target.value);
+                  setMaxPressed(false);
+                }}
+                placeholder={"0.00"}
               />
-              <Box>GMX</Box>
+              <Box>{symbol}</Box>
             </Box>
           </InputSection>
+          {insufficient ? (
+            <Box
+              textAlign={"right"}
+              color={"tomato"}
+              fontSize={"12px"}
+              mb={"10px"}
+              mt={"-10px"}
+            >
+              Insufficient Amount
+            </Box>
+          ) : (
+            ""
+          )}
           <Box>
-            <Button type={"secondary"} width={"100%"} height={"47px"}>
+            <Button
+              type={"secondary"}
+              width={"100%"}
+              height={"47px"}
+              disabled={pending || insufficient || !Number(amount)}
+              onClick={() => onConfirm()}
+            >
               Confirm
             </Button>
           </Box>
@@ -44,6 +94,13 @@ const StakingModal = ({ open, setOpen, type, amount, setAmount }) => {
     </Dialog>
   );
 };
+
+const MaxButton = styled(Box)`
+  cursor: pointer;
+  :hover {
+    color: white;
+  }
+`;
 
 const InputSection = styled(Box)`
   padding: 15px;

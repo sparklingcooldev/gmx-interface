@@ -2,7 +2,7 @@
 /* eslint-disable jsx-a11y/alt-text */
 import { Box, useMediaQuery } from "@mui/material";
 import styled from "styled-components";
-import { useEffect, useRef, useState } from "react";
+import { useEffect } from "react";
 import Button from "../Button";
 import { Link } from "react-router-dom";
 import { useAddress, useWeb3Context } from "../../hooks/web3Context";
@@ -10,16 +10,6 @@ import Hamburger from "./Hamburger";
 
 function TopBar({ activePage, setActivePage, setNotification }) {
   const { connect, disconnect } = useWeb3Context();
-  const account = useAddress();
-
-  const dialog = useRef();
-
-  const ellipsis = account
-    ? account.slice(0, 6) +
-      "..." +
-      account.substring(account.length - 5, account.length)
-    : "Connect Wallet";
-
   function onConnect() {
     connect().then((msg) => {
       if (msg.type === "error") {
@@ -27,6 +17,13 @@ function TopBar({ activePage, setActivePage, setNotification }) {
       }
     });
   }
+  const account = useAddress();
+
+  const ellipsis = account
+    ? account.slice(0, 6) +
+      "..." +
+      account.substring(account.length - 5, account.length)
+    : "Connect Wallet";
 
   useEffect(() => {
     const url = window.location.href;
@@ -128,7 +125,7 @@ const StyledContainer = styled(Box)`
   background: transparent 0% 0% no-repeat padding-box;
   border-bottom: 1px solid rgba(255, 255, 255, 0.062745098);
   letter-spacing: 0.5px;
-  z-index : 100;
+  z-index: 100;
 `;
 
 export default TopBar;
