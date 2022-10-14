@@ -5,6 +5,16 @@
         "internalType": "contract GDtoken",
         "name": "_gdUSDC",
         "type": "address"
+      },
+      {
+        "internalType": "contract GDtoken",
+        "name": "_gdETH",
+        "type": "address"
+      },
+      {
+        "internalType": "contract GDtoken",
+        "name": "_gdBTC",
+        "type": "address"
       }
     ],
     "stateMutability": "nonpayable",
@@ -72,6 +82,15 @@
   },
   {
     "inputs": [],
+    "name": "WBTC",
+    "outputs": [
+      { "internalType": "contract IERC20", "name": "", "type": "address" }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
     "name": "WETH",
     "outputs": [
       { "internalType": "contract IWETH", "name": "", "type": "address" }
@@ -128,14 +147,21 @@
     "inputs": [
       { "internalType": "uint256", "name": "_pid", "type": "uint256" }
     ],
-    "name": "currrentPoolTotal",
+    "name": "currentPoolTotal",
     "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
     "stateMutability": "view",
     "type": "function"
   },
   {
     "inputs": [],
-    "name": "cycleRewards",
+    "name": "cycleRewardsETH",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "cycleRewardsETHandEsGMX",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"

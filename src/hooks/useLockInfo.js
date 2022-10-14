@@ -34,7 +34,7 @@ export default function useLockInfo() {
 let dataid = null;
 
 export function LockInfoProvider({ children }) {
-  const account = "0x3014D0Fed2f03296CCa53275353054bcf1b78e13";
+  const account = useAddress();
   const [accountData, setAccountData] = useState([
     { balance: 0, stakedAmount: 0, allowance: false },
     { balance: 0, stakedAmount: 0, allowance: false },
@@ -64,7 +64,7 @@ export function LockInfoProvider({ children }) {
       ];
       const _balances = await multicall(ERC20ABI, calls);
       calls = [];
-      console.log(_balances); 
+      console.log(_balances);
       let indexes = [];
       for (let i = 0; i < 3; i++) {
         console.log(Number(_balances[i + 3][0]));
