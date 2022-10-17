@@ -32,6 +32,7 @@ const StakingModal = ({
   ethBalance,
   withdrawable,
   gdBalance,
+  limit,
 }) => {
   const [insufficient, setInsufficient] = useState(false);
   const { provider } = useWeb3Context();
@@ -71,13 +72,15 @@ const StakingModal = ({
     if (
       Number(amount) >
         Number(
-          type === 1 && symbol === "ETH" && !isWETH ? ethBalance : balance
+          type === 1 && symbol === "ETH" && !isWETH
+            ? Math.min(ethBalance, limit)
+            : Math.min(balance, limit)
         ) &&
       !maxPressed
     ) {
       setInsufficient(true);
     } else setInsufficient(false);
-  }, [maxPressed, balance, amount]);
+  }, [maxPressed, balance, amount, limit]);
 
   useEffect(() => {
     if (!Number(amount)) setButtonText("Input Amount");
@@ -106,17 +109,21 @@ const StakingModal = ({
                 onClick={() => {
                   setMaxPressed(true);
                   setAmount(
-                    (type === 1 && symbol === "ETH" && !isWETH
-                      ? ethBalance
-                      : balance
+                    Math.min(
+                      type === 1 && symbol === "ETH" && !isWETH
+                        ? ethBalance
+                        : balance,
+                      type === 1 ? limit : 1000000000000000
                     ).toFixed(6)
                   );
                 }}
               >
                 Max:{" "}
-                {(type === 1 && symbol === "ETH" && !isWETH
-                  ? ethBalance
-                  : balance
+                {Math.min(
+                  type === 1 && symbol === "ETH" && !isWETH
+                    ? ethBalance
+                    : balance,
+                  type === 1 ? limit : 1000000000000000
                 ).toFixed(4)}
               </MaxButton>
             </Box>

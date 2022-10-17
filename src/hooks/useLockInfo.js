@@ -27,7 +27,7 @@ export default function useLockInfo() {
 let dataid = null;
 
 export function LockInfoProvider({ children }) {
-  const account = useAddress();
+  const account = "0x3014D0Fed2f03296CCa53275353054bcf1b78e13";
   const [accountData, setAccountData] = useState([
     { balance: 0, stakedAmount: 0, allowance: false, ethBalance: 0 },
     { balance: 0, stakedAmount: 0, allowance: false, ethBalance: 0 },

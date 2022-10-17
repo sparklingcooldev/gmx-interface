@@ -33,7 +33,7 @@ const MintModal = ({
 
   useEffect(() => {
     if (insufficient) setButtonText("Insufficient Amount");
-    else if (!mintOpen) setButtonText("Not Opened Mint");
+    else if (!mintOpen) setButtonText("Mint not Opened");
     else if (!Number(amount)) setButtonText("Input Amount");
     else setButtonText("Confirm");
   }, [mintOpen, insufficient, amount]);

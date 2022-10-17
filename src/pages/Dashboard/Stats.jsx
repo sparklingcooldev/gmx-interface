@@ -14,11 +14,19 @@ const Stats = ({ setNotification }) => {
   const overviews = [
     {
       text: "AUM",
-      value: totalUSDValuts,
+      value: <Box>${numberWithCommas(totalUSDValuts.toFixed(5))}</Box>,
     },
     {
       text: "GLP managed",
-      value: GLPPrice * GLPinVault,
+      value: (
+        <Box>
+          {numberWithCommas(GLPinVault.toFixed(5))} ($
+          {numberWithCommas(
+            (GLPPrice * GLPinVault * Math.pow(10, 6)).toFixed(5)
+          )}
+          )
+        </Box>
+      ),
     },
     {
       text: "Total Fees",
@@ -27,7 +35,18 @@ const Stats = ({ setNotification }) => {
   ];
 
   const assets = [
-    { text: "GLP backing needed", value: GLPbackingNeeded * GLPPrice },
+    {
+      text: "GLP backing needed",
+      value: (
+        <Box>
+          {numberWithCommas(GLPbackingNeeded.toFixed(5))} ($
+          {numberWithCommas(
+            (GLPPrice * GLPbackingNeeded * Math.pow(10, 6)).toFixed(5)
+          )}
+          )
+        </Box>
+      ),
+    },
   ];
   return (
     <>
@@ -68,7 +87,7 @@ const Stats = ({ setNotification }) => {
                   lineHeight={"130%"}
                 >
                   <Box color={"rgba(255, 255, 255, 0.7)"}>{data.text}</Box>
-                  <Box>${numberWithCommas(data.value.toFixed(5))}</Box>
+                  <Box>{data.value}</Box>
                 </Box>
               );
             })}
@@ -86,7 +105,7 @@ const Stats = ({ setNotification }) => {
                   lineHeight={"130%"}
                 >
                   <Box color={"rgba(255, 255, 255, 0.7)"}>{data.text}</Box>
-                  <Box>${data.value.toFixed(5)}</Box>
+                  <Box>{data.value}</Box>
                 </Box>
               );
             })}

@@ -40,6 +40,12 @@ const Earn = ({ setNotification }) => {
 
   const decimals = [6, 18, 8, 18];
   const symbol = ["USDC", "ETH", "BTC", "GMD"];
+  const urls = [
+    "/icons/usdc.svg",
+    "/icons/eth.svg",
+    "/icons/bitcoin.svg",
+    "/icons/gmd.png",
+  ];
   const fees = ["0.5", "0.25", "0.25", "0.0"];
   const addresses = [USDC_ADDR, ETH_ADDR, BTC_ADDR, USDC_ADDR];
 
@@ -60,18 +66,41 @@ const Earn = ({ setNotification }) => {
         ethers.utils.parseEther("1") / pool[curIndex].GDpriceToStakedToken;
       console.log(rate);
       let estimateGas, ttx;
-      console.log(curIndex);
+      const maxBalance =
+        accountData[curIndex].balance >
+        ethers.utils.parseUnits(
+          pool[curIndex].vaultcap - pool[curIndex].totalStaked,
+          decimals[curIndex]
+        )
+          ? accountData[curIndex].balance
+          : ethers.utils.parseUnits(
+              pool[curIndex].vaultcap - pool[curIndex].totalStaked,
+              decimals[curIndex]
+            );
+
+      const maxETHBalance =
+        accountData[curIndex].ethbalance >
+        ethers.utils.parseUnits(
+          pool[curIndex].vaultcap - pool[curIndex].totalStaked,
+          decimals[curIndex]
+        )
+          ? accountData[curIndex].ethbalance
+          : ethers.utils.parseUnits(
+              pool[curIndex].vaultcap - pool[curIndex].totalStaked,
+              decimals[curIndex]
+            );
+
       if (type === 1) {
         if (!isWETH && curIndex === 1) {
           estimateGas = await valutContract.estimateGas.enterETH(curIndex, {
             value: maxPressed
-              ? accountData[curIndex].ethBalance
+              ? maxETHBalance
               : ethers.utils.parseUnits(amount, decimals[curIndex]),
           });
         } else
           estimateGas = await valutContract.estimateGas.enter(
             maxPressed
-              ? accountData[curIndex].balance
+              ? maxBalance
               : ethers.utils.parseUnits(amount, decimals[curIndex]),
             curIndex
           );
@@ -106,14 +135,14 @@ const Earn = ({ setNotification }) => {
         if (!isWETH && curIndex === 1) {
           ttx = await valutContract.enterETH(curIndex, {
             value: maxPressed
-              ? accountData[curIndex].ethBalance
+              ? maxETHBalance
               : ethers.utils.parseUnits(amount, decimals[curIndex]),
             gasLimit: Math.floor(estimateGas.toString() * 1.2),
           });
         } else
           ttx = await valutContract.enter(
             maxPressed
-              ? accountData[curIndex].balance
+              ? maxBalance
               : ethers.utils.parseUnits(amount, decimals[curIndex]),
             curIndex,
             tx
@@ -204,6 +233,10 @@ const Earn = ({ setNotification }) => {
         address={addresses[curIndex]}
         isWETH={isWETH}
         setIsWETH={setIsWETH}
+        limit={
+          (pool[curIndex].vaultcap - pool[curIndex].totalStaked) /
+          Math.pow(10, 18)
+        }
       />
       <Box fontSize={"34px"} mb={"8px"} fontWeight={"bold"}>
         Earn
@@ -224,7 +257,18 @@ const Earn = ({ setNotification }) => {
           ];
           return (
             <Panel key={i}>
-              <PanelHeader>{symbol[i]}</PanelHeader>
+              <PanelHeader>
+                <Box>
+                  <CoinSVG
+                    style={{
+                      background: `url(${urls[i]})`,
+                      backgroundSize: "100% 100%",
+                    }}
+                    mr={"8px"}
+                  />
+                </Box>
+                <Box>{symbol[i]}</Box>
+              </PanelHeader>
               <Divider />
               <PanelBody>
                 <Box>
@@ -300,7 +344,7 @@ const Earn = ({ setNotification }) => {
               </PanelBody>
               <Divider />
               <PanelBody>
-                <Box alignItems={"center"}>
+                <Box alignItems={"center"} mb={"20px!important"}>
                   <Box color={"rgba(255, 255, 255, 0.7)"}>
                     Total Staked in Pool
                   </Box>
@@ -309,13 +353,13 @@ const Earn = ({ setNotification }) => {
                     flexDirection={"column"}
                     alignItems={"center"}
                   >
-                    <PieChart width={160} height={160}>
+                    <PieChart width={180} height={180}>
                       <Pie
                         data={gmxDistributionData}
-                        cx={76}
-                        cy={76}
-                        innerRadius={50}
-                        outerRadius={63}
+                        cx={86}
+                        cy={86}
+                        innerRadius={60}
+                        outerRadius={73}
                         fill="#8884d8"
                         dataKey="value"
                         startAngle={90}
@@ -351,18 +395,23 @@ const Earn = ({ setNotification }) => {
                         textAnchor="middle"
                         dominantBaseline="middle"
                         fontSize={"12px"}
+                        letterSpacing={"0px"}
                       >
-                        Staked / Total
+                        Staked / Valut Cap
                       </text>
                       <Tooltip content={<CustomTooltip />} />
                     </PieChart>
                     <Box>
                       {(pool[i].totalStaked / Math.pow(10, 18)).toFixed(2)} /{" "}
                       {(pool[i].vaultcap / Math.pow(10, 18)).toFixed(2)}{" "}
-                      {symbol[i]}
+                      {symbol[i]}{" "}
+                      {pool[i].totalStaked === pool[i].valutcap
+                        ? "(Fully Reached)"
+                        : ""}
                     </Box>
                   </Box>
                 </Box>
+                <Divider />
                 <Box>
                   <Box color={"rgba(255, 255, 255, 0.7)"}>Fee</Box>
                   <Box>{fees[i]}%</Box>
@@ -385,7 +434,9 @@ const Earn = ({ setNotification }) => {
                       type={"primary"}
                       width={"80px"}
                       height={"36px"}
-                      disabled={pending}
+                      disabled={
+                        pending || pool[i].totalStaked === pool[i].valutcap
+                      }
                       onClick={() => {
                         setOpen(true);
                         setType(1);
@@ -398,7 +449,11 @@ const Earn = ({ setNotification }) => {
                       type={"primary"}
                       width={"80px"}
                       height={"36px"}
-                      disabled={pending}
+                      disabled={
+                        pending ||
+                        !pool[i].withdrawable ||
+                        !Number(accountData[i].gdBalance)
+                      }
                       onClick={() => {
                         setOpen(true);
                         setType(2);
@@ -430,6 +485,11 @@ const Earn = ({ setNotification }) => {
   );
 };
 
+const CoinSVG = styled(Box)`
+  width: 40px;
+  height: 40px;
+`;
+
 const Panel = styled(Box)`
   padding: 15px 15px 18px;
   border: 1px solid #1e2136;
@@ -453,7 +513,6 @@ const PanelHeader = styled(Box)`
   margin-bottom: 15px;
   display: flex;
   align-items: center;
-  justify-content: space-between;
 `;
 
 const PanelBody = styled(Box)`
