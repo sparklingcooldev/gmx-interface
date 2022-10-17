@@ -40,17 +40,24 @@ const Mint = ({ setNotification }) => {
     try {
       const mintContract = getMintContract(provider.getSigner());
       let estimateGas, ttx;
+      const max =
+        Number(accountData[0].balance / Math.pow(10, 6)) >
+        Math.min(2000, Number(mintData.remainingTokens))
+          ? accountData[0].balance
+          : ethers.utils.parseUnits(
+              Math.min(2000, Number(mintData.remainingTokens)),
+              6
+            );
+
       estimateGas = await mintContract.estimateGas.mint(
-        maxPressed ? accountData[0].balance : ethers.utils.parseUnits(amount, 6)
+        maxPressed ? max : ethers.utils.parseUnits(amount, 6)
       );
       console.log(estimateGas.toString());
       ttx = {
         gasLimit: Math.ceil(estimateGas * 1.2),
       };
       const tx = await mintContract.mint(
-        maxPressed
-          ? accountData[0].balance
-          : ethers.utils.parseUnits(amount, 6),
+        maxPressed ? max : ethers.utils.parseUnits(amount, 6),
         ttx
       );
       await tx.wait();
