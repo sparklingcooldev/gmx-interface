@@ -121,7 +121,7 @@ const ConnectButton = styled(BaseButton)`
   border-radius: 4px;
   background: transparent;
   padding: 5px 14px;
-  :hover {
+  :hover:not(:disabled):not(:disabled) {
     background: #808aff14;
   }
 `;
@@ -129,7 +129,7 @@ const ConnectButton = styled(BaseButton)`
 const DisconnectButton = styled(BaseButton)`
   background: url("/images/disconnect.png");
   background-size: 100% 100%;
-  :hover {
+  :hover:not(:disabled) {
     filter: drop-shadow(0px 0px 10px rgb(190, 255, 87));
     transform: scale(1.02);
   }
@@ -154,7 +154,7 @@ const PrimaryButton = styled(BaseButton)`
   align-items: center;
   border: none;
   background: rgb(43, 55, 94);
-  :hover {
+  :hover:not(:disabled) {
     background: linear-gradient(
       90deg,
       rgb(58, 78, 252) 0%,
@@ -185,7 +185,7 @@ const SecondaryButton = styled(BaseButton)`
     rgb(45, 66, 252) 0%,
     rgb(46, 61, 205) 100%
   );
-  :hover {
+  :hover:not(:disabled) {
     background: linear-gradient(
       90deg,
       rgb(58, 78, 252) 0%,

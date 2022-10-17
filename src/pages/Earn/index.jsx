@@ -263,6 +263,7 @@ const Earn = ({ setNotification }) => {
                     style={{
                       background: `url(${urls[i]})`,
                       backgroundSize: "100% 100%",
+                      width: i === 3 ? "35px" : "40px",
                     }}
                     mr={"8px"}
                   />
@@ -435,7 +436,9 @@ const Earn = ({ setNotification }) => {
                       width={"80px"}
                       height={"36px"}
                       disabled={
-                        pending || pool[i].totalStaked === pool[i].valutcap
+                        pending ||
+                        pool[i].totalStaked === pool[i].valutcap ||
+                        !pool[i].stakable
                       }
                       onClick={() => {
                         setOpen(true);

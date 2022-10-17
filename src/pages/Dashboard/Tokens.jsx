@@ -6,8 +6,11 @@ import styled from "styled-components";
 import { PieChart, Pie, Cell, Tooltip } from "recharts";
 import hexToRgba from "hex-to-rgba";
 import { useState } from "react";
+import useMintInfo from "../../hooks/useMintInfo";
+import { numberWithCommas } from "../../utils/functions";
 
 const Tokens = () => {
+  const { mintData } = useMintInfo();
   let gmxDistributionData = [
     {
       name: "staked",
@@ -52,7 +55,10 @@ const Tokens = () => {
 
   const GMD = [
     { text: "Price", value: "$0.00000" },
-    { text: "Supply", value: 0 },
+    {
+      text: "Supply",
+      value: `${numberWithCommas(mintData.totalSupply.toFixed(5))} GMD`,
+    },
     { text: "Total Staked", value: "$0.00000" },
     { text: "Market Cap", value: "$0.00000" },
   ];
@@ -196,7 +202,7 @@ const Panel = styled(Box)`
   > div {
     /* max-width: 500px; */
   }
-  
+
   @media screen and (max-width: 1100px) {
     max-width: 100%;
   }

@@ -48,6 +48,8 @@ export function TokenInfoProvider({ children }) {
       apr: 0,
       totalStaked: 0,
       vaultcap: 0,
+      stakable: false,
+      withdrawable: false,
     },
     {
       price: 0,
@@ -56,6 +58,8 @@ export function TokenInfoProvider({ children }) {
       apr: 0,
       totalStaked: 0,
       vaultcap: 0,
+      stakable: false,
+      withdrawable: false,
     },
     {
       price: 0,
@@ -64,6 +68,8 @@ export function TokenInfoProvider({ children }) {
       apr: 0,
       totalStaked: 0,
       vaultcap: 0,
+      stakable: false,
+      withdrawable: false,
     },
     {
       price: 0,
@@ -72,6 +78,8 @@ export function TokenInfoProvider({ children }) {
       apr: 0,
       totalStaked: 0,
       vaultcap: 0,
+      stakable: false,
+      withdrawable: false,
     },
   ]);
 
@@ -125,6 +133,7 @@ export function TokenInfoProvider({ children }) {
           totalStaked: result[2].totalStaked,
           GDpriceToStakedToken: result[5][0],
           withdrawable: result[2].withdrawable,
+          stakable: result[2].stakable,
           vaultcap: result[2].vaultcap,
         },
         {
@@ -135,6 +144,7 @@ export function TokenInfoProvider({ children }) {
           totalStaked: result[3].totalStaked,
           GDpriceToStakedToken: result[6][0],
           withdrawable: result[3].withdrawable,
+          stakable: result[3].stakable,
           vaultcap: result[3].vaultcap,
         },
         {
@@ -145,6 +155,7 @@ export function TokenInfoProvider({ children }) {
           totalStaked: result[4].totalStaked,
           GDpriceToStakedToken: result[7][0],
           withdrawable: result[4].withdrawable,
+          stakable: result[4].stakable,
           vaultcap: result[4].vaultcap,
         },
         {
@@ -156,6 +167,7 @@ export function TokenInfoProvider({ children }) {
           GDpriceToStakedToken: 1,
           withdrawable: false,
           vaultcap: 0,
+          stakable: false,
         },
       ]);
     } catch (error) {
