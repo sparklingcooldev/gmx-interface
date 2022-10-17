@@ -1,13 +1,13 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable jsx-a11y/alt-text */
-import { Box, useMediaQuery } from "@mui/material";
+import { Box } from "@mui/material";
 import styled from "styled-components";
 import { PieChart, Pie, Cell, Tooltip } from "recharts";
 import hexToRgba from "hex-to-rgba";
 import { useState } from "react";
 
-const Tokens = ({ setNotification }) => {
+const Tokens = () => {
   let gmxDistributionData = [
     {
       name: "staked",
@@ -50,7 +50,6 @@ const Tokens = ({ setNotification }) => {
     }
   };
 
-  const md = useMediaQuery("(max-width : 1100px)");
   const GMD = [
     { text: "Price", value: "$0.00000" },
     { text: "Supply", value: 0 },
@@ -151,84 +150,6 @@ const Tokens = ({ setNotification }) => {
             </PieChart>
           </Box>
         </Panel>
-        <Panel mt={md ? "15px" : 0}>
-          <Box maxWidth={"calc(100% - 210px)"} width={"100%"}>
-            <PanelHeader>
-              <GLPSVG mr={"8px"}>
-                <Box />
-              </GLPSVG>
-              <Box>
-                <Box lineHeight={"130%"}>GLP</Box>
-                <Box fontSize={"12px"} color={"#a9a9b0"} lineHeight={"130%"}>
-                  GLP
-                </Box>
-              </Box>
-            </PanelHeader>
-            <Divider />
-            <PanelBody>
-              {GMD.map((data) => {
-                return (
-                  <Box
-                    display={"flex"}
-                    justifyContent={"space-between"}
-                    lineHeight={"19px"}
-                  >
-                    <Box color={"rgba(255, 255, 255, 0.7)"}>{data.text}</Box>
-                    <Box>{data.value}</Box>
-                  </Box>
-                );
-              })}
-            </PanelBody>
-          </Box>
-          <Box margin={"-10px -10px -10px 15px"}>
-            <PieChart width={210} height={210}>
-              <Pie
-                data={gmxDistributionData}
-                cx={100}
-                cy={100}
-                innerRadius={73}
-                outerRadius={80}
-                fill="#8884d8"
-                dataKey="value"
-                startAngle={90}
-                endAngle={-270}
-                paddingAngle={2}
-                onMouseEnter={onGMXDistributionChartEnter}
-                onMouseOut={onGMXDistributionChartLeave}
-                onMouseLeave={onGMXDistributionChartLeave}
-              >
-                {gmxDistributionData.map((entry, index) => (
-                  <Cell
-                    key={`cell-${index}`}
-                    fill={entry.color}
-                    style={{
-                      filter:
-                        gmxActiveIndex === index
-                          ? `drop-shadow(0px 0px 6px ${hexToRgba(
-                              entry.color,
-                              0.7
-                            )})`
-                          : "none",
-                      cursor: "pointer",
-                    }}
-                    stroke={entry.color}
-                    strokeWidth={gmxActiveIndex === index ? 1 : 1}
-                  />
-                ))}
-              </Pie>
-              <text
-                x={"50%"}
-                y={"50%"}
-                fill="white"
-                textAnchor="middle"
-                dominantBaseline="middle"
-              >
-                GLP Pool
-              </text>
-              <Tooltip content={<CustomTooltip />} />
-            </PieChart>
-          </Box>
-        </Panel>
       </Box>
     </Box>
   );
@@ -270,6 +191,10 @@ const Panel = styled(Box)`
   display: flex;
   justify-content: space-between;
   align-items: center;
+
+  > div {
+    max-width: 500px;
+  }
   .stats-label {
     font-size: 14px;
     line-height: 16px;
@@ -287,7 +212,6 @@ const Panel = styled(Box)`
     height: 100%;
     margin-right: 15px;
   }
-  max-width: calc(50% - 8px);
   @media screen and (max-width: 1100px) {
     max-width: 100%;
   }
@@ -307,27 +231,10 @@ const ArbitranSVG = styled(Box)`
 `;
 
 const GMXSVG = styled(Box)`
-  background: url("/icons/gmx.svg");
+  background: url("/icons/gmd.png");
   background-size: 100% 100%;
   width: 40px;
   height: 40px;
-`;
-
-const GLPSVG = styled(Box)`
-  background: url("/icons/glp.svg");
-  background-size: 100% 100%;
-  width: 40px;
-  height: 40px;
-  position: relative;
-  > div {
-    position: absolute;
-    background: url("/icons/arbitran.svg");
-    background-size: 100% 100%;
-    width: 16px;
-    height: 16px;
-    right: 0;
-    bottom: 0;
-  }
 `;
 
 export default Tokens;

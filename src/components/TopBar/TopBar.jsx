@@ -31,7 +31,7 @@ function TopBar({ activePage, setActivePage, setNotification }) {
     if (url.includes("earn")) setActivePage(2);
   }, []);
 
-  const menus = ["Dashboard", "Earn"];
+  const menus = ["Dashboard", "Earn", "Mint GMD"];
 
   const sm = useMediaQuery("(max-width : 550px)");
   return (
@@ -46,7 +46,7 @@ function TopBar({ activePage, setActivePage, setNotification }) {
               return (
                 <Link
                   key={i}
-                  to={`/${data.toLowerCase()}`}
+                  to={`/${data.replace(" ", "").toLowerCase()}`}
                   onClick={() => setActivePage(i + 1)}
                 >
                   {data}
@@ -101,15 +101,10 @@ const Logo = styled(Box)`
   margin-right: 12px;
   height: fit-content;
   > div {
-    background-image: url("/logotext.svg");
+    background-image: url("/logotext.png");
     background-size: 100% 100%;
-    width: 83px;
-    height: 22px;
-    @media screen and (max-width: 550px) {
-      background-image: url("/logo.svg");
-      width: 29px;
-      height: 22px;
-    }
+    width: 35px;
+    height: 45px;
   }
 `;
 

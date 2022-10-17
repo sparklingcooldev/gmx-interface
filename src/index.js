@@ -6,6 +6,7 @@ import { GlobalProvider } from "./context/GlobalContext";
 import { Web3ContextProvider } from "./hooks/web3Context";
 import { TokenInfoProvider } from "./hooks/useTokenInfo";
 import { LockInfoProvider } from "./hooks/useLockInfo";
+import { MintInfoProvider } from "./hooks/useMintInfo";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
@@ -14,7 +15,9 @@ root.render(
       <Web3ContextProvider>
         <TokenInfoProvider>
           <LockInfoProvider>
-            <App />
+            <MintInfoProvider>
+              <App />
+            </MintInfoProvider>
           </LockInfoProvider>
         </TokenInfoProvider>
       </Web3ContextProvider>

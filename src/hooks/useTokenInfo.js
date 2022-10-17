@@ -119,6 +119,7 @@ export function TokenInfoProvider({ children }) {
           apr: result[2].APR / 100,
           totalStaked: result[2].totalStaked,
           GDpriceToStakedToken: result[5][0],
+          withdrawable: result[2].withdrawable,
         },
         {
           price: _prices[2][0] / Math.pow(10, 30),
@@ -127,6 +128,7 @@ export function TokenInfoProvider({ children }) {
           apr: result[3].APR / 100,
           totalStaked: result[3].totalStaked,
           GDpriceToStakedToken: result[6][0],
+          withdrawable: result[3].withdrawable,
         },
         {
           price: _prices[3][0] / Math.pow(10, 30),
@@ -135,6 +137,7 @@ export function TokenInfoProvider({ children }) {
           apr: result[4].APR / 100,
           totalStaked: result[4].totalStaked,
           GDpriceToStakedToken: result[7][0],
+          withdrawable: result[4].withdrawable,
         },
         {
           price: 0,
@@ -143,42 +146,9 @@ export function TokenInfoProvider({ children }) {
           apr: 0,
           totalStaked: 0,
           GDpriceToStakedToken: 1,
+          withdrawable: false,
         },
       ]);
-      console.log(
-        {
-          price: _prices[1][0] / Math.pow(10, 30),
-          pool: USDCSAmount,
-          weight: (USDCSAmount / _totalUSDValuts) * 100,
-          apr: result[2].APR / 100,
-          totalStaked: result[2].totalStaked,
-          GDpriceToStakedToken: result[5][0],
-        },
-        {
-          price: _prices[2][0] / Math.pow(10, 30),
-          pool: ETHSAmount,
-          weight: (ETHSAmount / _totalUSDValuts) * 100,
-          apr: result[3].APR / 100,
-          totalStaked: result[3].totalStaked,
-          GDpriceToStakedToken: result[6][0],
-        },
-        {
-          price: _prices[3][0] / Math.pow(10, 30),
-          pool: BTCSAmount,
-          weight: (BTCSAmount / _totalUSDValuts) * 100,
-          apr: result[4].APR / 100,
-          totalStaked: result[4].totalStaked,
-          GDpriceToStakedToken: result[7][0],
-        },
-        {
-          price: 0,
-          pool: 0,
-          weight: 0,
-          apr: 0,
-          totalStaked: 0,
-          GDpriceToStakedToken: 1,
-        }
-      );
     } catch (error) {
       console.log(error);
     }

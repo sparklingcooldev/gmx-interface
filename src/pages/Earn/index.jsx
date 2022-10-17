@@ -165,6 +165,8 @@ const Earn = ({ setNotification }) => {
             : accountData[curIndex].stakedAmount / Math.pow(10, 18)
         }
         ethBalance={accountData[curIndex].ethBalance / Math.pow(10, 18)}
+        gdBalance={accountData[curIndex].gdBalance}
+        withdrawable={pool[curIndex].withdrawable}
         setMaxPressed={setMaxPresssed}
         maxPressed={maxPressed}
         pending={pending}

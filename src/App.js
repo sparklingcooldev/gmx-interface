@@ -8,6 +8,7 @@ import Dashboard from "./pages/Dashboard";
 import Earn from "./pages/Earn";
 import ComingSoon from "./pages/ComingSoon";
 import Footer from "./components/Footer";
+import MintGMD from "./pages/Mint";
 
 import "./App.css";
 import Notification from "./components/Notification";
@@ -72,6 +73,11 @@ function App() {
             exact
             path="/earn"
             element={<Earn setNotification={setNotification} />}
+          />
+          <Route
+            exact
+            path="/mintgmd"
+            element={<MintGMD setNotification={setNotification} />}
           />
         </Routes>
       </Box>

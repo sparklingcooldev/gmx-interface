@@ -80,7 +80,13 @@ export function LockInfoProvider({ children }) {
         });
       }
 
-      temp.push({ balance: 0, stakedAmount: 0, allowance: false });
+      temp.push({
+        balance: 0,
+        stakedAmount: 0,
+        allowance: false,
+        gdBalance: 0,
+        ethBalance: 0,
+      });
       console.log(temp);
       setAccountData(temp);
     } catch (error) {

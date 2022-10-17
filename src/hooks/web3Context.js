@@ -207,7 +207,7 @@ export const Web3ContextProvider = ({ children }) => {
         return {
           type: "error",
           title: "Error",
-          detail: "Wrong network, please switch to Ethereum mainnet",
+          detail: "Wrong network, please switch to Arbitrum mainnet",
         };
       }
       // Save everything after we've validated the right network.

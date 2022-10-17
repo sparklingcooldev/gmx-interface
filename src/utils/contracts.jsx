@@ -1,9 +1,15 @@
 import { ethers } from "ethers";
-import { MULTICALL_ADDR, PRICE_ADDR, VAULT_ADDR } from "../abis/address";
+import {
+  MINT_ADDR,
+  MULTICALL_ADDR,
+  PRICE_ADDR,
+  VAULT_ADDR,
+} from "../abis/address";
 import MultiCallABI from "../abis/MultiCallABI.json";
 import ERC20ABI from "../abis/ERC20ABI.json";
 import VaultABI from "../abis/ValutABI.json";
 import PriceABI from "../abis/PriceABI.json";
+import MintABI from "../abis/MintABI.json";
 
 export const RPC_ENDPOINT = "https://arb1.arbitrum.io/rpc";
 
@@ -22,6 +28,11 @@ export const getVaultContract = (signer) => {
 export const getPriceContract = (signer) => {
   return getContract(PriceABI, PRICE_ADDR, signer);
 };
+
+export const getMintContract = (signer) => {
+  return getContract(MintABI, MINT_ADDR, signer);
+};
+
 export const getMulticallContract = (signer) => {
   return getContract(MultiCallABI, MULTICALL_ADDR, signer);
 };

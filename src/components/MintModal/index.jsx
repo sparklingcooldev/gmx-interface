@@ -5,44 +5,36 @@ import { AiOutlineClose } from "react-icons/ai";
 import Button from "../Button";
 import { useState } from "react";
 import { useEffect } from "react";
-import { VAULT_ADDR } from "../../abis/address";
+import { MINT_ADDR, USDC_ADDR } from "../../abis/address";
 import { getTokenContract } from "../../utils/contracts";
 import { useWeb3Context } from "../../hooks/web3Context";
-import useLockInfo from "../../hooks/useLockInfo";
 import { figureError } from "../../utils/functions";
+import useMintInfo from "../../hooks/useMintInfo";
 
-const StakingModal = ({
+const MintModal = ({
   open,
   setOpen,
-  type,
+  max,
   amount,
   setAmount,
-  balance,
   maxPressed,
   setMaxPressed,
   pending,
   setPending,
-  symbol,
-  onConfirm,
-  allowance,
-  address,
+  onMint,
+  mintPrice,
   setNotification,
-  isWETH,
-  setIsWETH,
-  ethBalance,
-  withdrawable,
-  gdBalance,
 }) => {
   const [insufficient, setInsufficient] = useState(false);
   const { provider } = useWeb3Context();
-  const { fetchAccountData } = useLockInfo();
+  const { fetchMintAccountData, mintAccountData } = useMintInfo();
 
   const onApprove = async (i) => {
     setPending(true);
     try {
-      const tokenContract = getTokenContract(address, provider.getSigner());
+      const tokenContract = getTokenContract(USDC_ADDR, provider.getSigner());
       const estimateGas = await tokenContract.estimateGas.approve(
-        VAULT_ADDR,
+        MINT_ADDR,
         "115792089237316195423570985008687907853269984665640564039457584007913129639935"
       );
       console.log(estimateGas.toString());
@@ -51,12 +43,12 @@ const StakingModal = ({
         gasLimit: estimateGas.toString(),
       };
       const approveTx = await tokenContract.approve(
-        VAULT_ADDR,
+        MINT_ADDR,
         "115792089237316195423570985008687907853269984665640564039457584007913129639935",
         tx
       );
       await approveTx.wait();
-      fetchAccountData();
+      fetchMintAccountData();
     } catch (error) {
       console.log(error);
       figureError(error, setNotification);
@@ -65,64 +57,52 @@ const StakingModal = ({
   };
 
   useEffect(() => {
-    console.log(maxPressed);
-
-    if (
-      Number(amount) >
-        Number(
-          type === 1 && symbol === "ETH" && !isWETH ? ethBalance : balance
-        ) &&
-      !maxPressed
-    ) {
-      setInsufficient(true);
-    } else setInsufficient(false);
-  }, [maxPressed, balance, amount]);
-
+    if (!maxPressed && Number(amount) > max) setInsufficient(true);
+    else setInsufficient(false);
+  }, [amount, maxPressed]);
   return (
     <Dialog open={open} onClose={() => setOpen(false)}>
       <Panel>
         <DialogHeader>
-          <Box>
-            {type === 1 ? "Stake" : "Unstake"} {symbol}
-          </Box>
+          <Box>Mint GMD</Box>
           <AiOutlineClose cursor={"pointer"} onClick={() => setOpen(false)} />
         </DialogHeader>
         <Divider />
         <DialogBody>
           <InputSection>
             <Box>
-              <Box>{type === 1 ? "Stake" : "Unstake"}</Box>
+              <Box>{"Mint"}</Box>
               <MaxButton
                 onClick={() => {
                   setMaxPressed(true);
-                  setAmount(
-                    (type === 1 && symbol === "ETH" && !isWETH
-                      ? ethBalance
-                      : balance
-                    ).toFixed(6)
-                  );
+                  setAmount(max.toFixed(6));
                 }}
               >
-                Max:{" "}
-                {(type === 1 && symbol === "ETH" && !isWETH
-                  ? ethBalance
-                  : balance
-                ).toFixed(4)}
+                Max: {max.toFixed(4)}
               </MaxButton>
             </Box>
             <Box>
               <input
                 type={"text"}
+                placeholder={"0.00"}
                 value={amount}
                 onChange={(e) => {
                   setAmount(e.target.value);
                   setMaxPressed(false);
                 }}
-                placeholder={"0.00"}
               />
-              <Box>{isWETH ? "WETH" : symbol}</Box>
+              <Box>USDC</Box>
             </Box>
           </InputSection>
+          <Box
+            textAlign={"right"}
+            color={"white"}
+            fontSize={"12px"}
+            mb={"10px"}
+            mt={"-10px"}
+          >
+            = {(mintPrice ? amount / mintPrice : 0.0).toFixed(4)} GMD
+          </Box>
           {insufficient ? (
             <Box
               textAlign={"right"}
@@ -136,33 +116,15 @@ const StakingModal = ({
           ) : (
             ""
           )}
-          {symbol === "ETH" ? (
-            <CheckBoxGroup>
-              <Box onClick={() => setIsWETH(false)}>
-                <input type={"radio"} checked={!isWETH} />
-                <Box>ETH</Box>
-              </Box>
-              <Box onClick={() => setIsWETH(true)}>
-                <input type={"radio"} checked={isWETH} />
-                <Box>WETH</Box>
-              </Box>
-            </CheckBoxGroup>
-          ) : (
-            ""
-          )}
+
           <Box>
-            {allowance || type === 2 || (symbol === "ETH" && !isWETH) ? (
+            {mintAccountData.allowance ? (
               <Button
                 type={"secondary"}
                 width={"100%"}
                 height={"47px"}
-                disabled={
-                  pending ||
-                  insufficient ||
-                  !Number(amount) ||
-                  (type === 2 && (!Number(gdBalance) || !withdrawable))
-                }
-                onClick={() => onConfirm()}
+                disabled={!Number(amount) || pending || insufficient}
+                onClick={() => onMint()}
               >
                 Confirm
               </Button>
@@ -183,27 +145,6 @@ const StakingModal = ({
     </Dialog>
   );
 };
-
-const CheckBoxGroup = styled(Box)`
-  display: flex;
-  justify-content: flex-end;
-  margin-bottom: 15px;
-  > div {
-    display: flex;
-    align-items: center;
-    margin-right: 10px;
-    cursor: pointer;
-    > input {
-      cursor: pointer;
-    }
-    > div {
-      color: white;
-      margin-left: 5px;
-      font-size: 12px;
-      margin-top: -2px;
-    }
-  }
-`;
 
 const MaxButton = styled(Box)`
   cursor: pointer;
@@ -273,4 +214,4 @@ const DialogHeader = styled(Box)`
   margin: 15px;
 `;
 
-export default StakingModal;
+export default MintModal;

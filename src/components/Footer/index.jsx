@@ -73,10 +73,10 @@ const Socials = styled(Box)`
 `;
 
 const LogoTextSVG = styled(Box)`
-  background: url("/logotext.svg");
+  background: url("/logotext.png");
   background-size: 100% 100%;
-  width: 115px;
-  height: 26px;
+  min-width: 72px;
+  min-height: 90px;
 `;
 
 const StyledContainer = styled(Box)`
@@ -84,9 +84,10 @@ const StyledContainer = styled(Box)`
   flex-direction: column;
   align-items: center;
   padding-top: 40px;
-  height: 200px;
+  height: fit-content;
   border-top: 1px solid #282b4c;
   background: #16182e;
+  padding-bottom: 20px;
 `;
 
 export default Footer;
