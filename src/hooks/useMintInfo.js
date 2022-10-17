@@ -23,6 +23,7 @@ import { ethers } from "ethers";
 const defaultVal = {
   mintData: {},
   mintAccountData: {},
+  allowance: false,
   fetchMintData: () => {},
   fetchMintAccountData: () => {},
 };
@@ -77,6 +78,10 @@ export function MintInfoProvider({ children }) {
   }
   async function fetchMintAccountData() {
     try {
+      const usdcContract = getTokenContract(USDC_ADDR);
+      const allowance = await usdcContract.allowance(account, MINT_ADDR);
+      console.log(allowance);
+      setAllowance(allowance > ethers.utils.parseUnits("10000", "6"));
       let calls = [
         {
           address: MINT_ADDR,
@@ -96,9 +101,6 @@ export function MintInfoProvider({ children }) {
         vestPeriod: result[0].VestPeriod / 1,
         claimableTokens: result[1][0] / Math.pow(10, 18),
       });
-      const usdcContract = getTokenContract(USDC_ADDR);
-      const allowance = await usdcContract.allowance(account, MINT_ADDR);
-      setAllowance(allowance > ethers.utils.parseUnits("10000", "6"));
     } catch (error) {
       console.log(error);
     }
@@ -126,6 +128,7 @@ export function MintInfoProvider({ children }) {
       value={{
         mintData,
         mintAccountData,
+        allowance,
         fetchMintAccountData,
         fetchMintData,
       }}

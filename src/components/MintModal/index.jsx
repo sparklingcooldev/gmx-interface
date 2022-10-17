@@ -27,7 +27,7 @@ const MintModal = ({
 }) => {
   const [insufficient, setInsufficient] = useState(false);
   const { provider } = useWeb3Context();
-  const { fetchMintAccountData, mintAccountData } = useMintInfo();
+  const { fetchMintAccountData, allowance } = useMintInfo();
 
   const onApprove = async (i) => {
     setPending(true);
@@ -118,7 +118,7 @@ const MintModal = ({
           )}
 
           <Box>
-            {mintAccountData.allowance ? (
+            {allowance ? (
               <Button
                 type={"secondary"}
                 width={"100%"}

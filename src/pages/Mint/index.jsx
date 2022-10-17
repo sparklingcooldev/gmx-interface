@@ -17,7 +17,8 @@ import useMintInfo from "../../hooks/useMintInfo";
 
 const Mint = ({ setNotification }) => {
   const { accountData, fetchAccountData } = useLockInfo();
-  const { mintData, mintAccountData } = useMintInfo();
+  const { mintData, mintAccountData, fetchMintData, fetchMintAccountData } =
+    useMintInfo();
   const account = useAddress();
   const { connect, provider } = useWeb3Context();
   const [pending, setPending] = useState(false);
@@ -51,6 +52,8 @@ const Mint = ({ setNotification }) => {
         ttx
       );
       await tx.wait();
+      fetchMintAccountData();
+      fetchMintData();
     } catch (error) {
       console.log(error);
       figureError(error, setNotification);
@@ -68,6 +71,8 @@ const Mint = ({ setNotification }) => {
       };
       const tx = await mintContract.claim(ttx);
       await tx.wait();
+      fetchMintAccountData();
+      fetchMintData();
     } catch (error) {
       console.log(error);
       figureError(error, setNotification);
@@ -78,7 +83,11 @@ const Mint = ({ setNotification }) => {
       <MintModal
         open={open}
         setOpen={setOpen}
-        max={Math.min(2000, Number(mintData.remainingTokens))}
+        max={Math.min(
+          2000,
+          Number(mintData.remainingTokens),
+          Number(accountData[0].balance / Math.pow(10, 6))
+        )}
         amount={amount}
         setAmount={setAmount}
         maxPressed={maxPressed}
