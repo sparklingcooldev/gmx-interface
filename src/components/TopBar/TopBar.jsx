@@ -101,10 +101,10 @@ const Logo = styled(Box)`
   margin-right: 12px;
   height: fit-content;
   > div {
-    background-image: url("/logotext.png");
+    background-image: url("/icons/gmd.png");
     background-size: 100% 100%;
     width: 35px;
-    height: 45px;
+    height: 40px;
   }
 `;
 

@@ -42,6 +42,8 @@ export function MintInfoProvider({ children }) {
     mintPrice: 0,
     mintCap: 0,
     remainingTokens: 0,
+    mintOpen: false,
+    totalSupply: 0,
   });
   const [mintAccountData, setMintAccountData] = useState({
     mintedAmount: 0,
@@ -64,6 +66,8 @@ export function MintInfoProvider({ children }) {
           params: [],
         },
         { address: MINT_ADDR, name: "remainingMintableTokens", params: [] },
+        { address: MINT_ADDR, name: "totalSupply", params: [] },
+        { address: MINT_ADDR, name: "mintOpen", params: [] },
       ];
       const result = await multicall(MINTABI, calls);
       console.log(result);
@@ -71,6 +75,8 @@ export function MintInfoProvider({ children }) {
         mintPrice: result[0][0] / 1000,
         mintCap: result[1][0] / Math.pow(10, 18),
         remainingTokens: result[2][0] / Math.pow(10, 18),
+        mintOpen: result[4][0],
+        totalSupply: result[3][0] / Math.pow(10, 18),
       });
     } catch (error) {
       console.log(error);

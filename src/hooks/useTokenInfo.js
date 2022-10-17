@@ -47,6 +47,7 @@ export function TokenInfoProvider({ children }) {
       weight: 0,
       apr: 0,
       totalStaked: 0,
+      vaultcap: 0,
     },
     {
       price: 0,
@@ -54,6 +55,7 @@ export function TokenInfoProvider({ children }) {
       weight: 0,
       apr: 0,
       totalStaked: 0,
+      vaultcap: 0,
     },
     {
       price: 0,
@@ -61,6 +63,7 @@ export function TokenInfoProvider({ children }) {
       weight: 0,
       apr: 0,
       totalStaked: 0,
+      vaultcap: 0,
     },
     {
       price: 0,
@@ -68,6 +71,7 @@ export function TokenInfoProvider({ children }) {
       weight: 0,
       apr: 0,
       totalStaked: 0,
+      vaultcap: 0,
     },
   ]);
 
@@ -111,6 +115,7 @@ export function TokenInfoProvider({ children }) {
         (result[4].totalStaked * _prices[3][0]) / Math.pow(10, 48);
       let _totalUSDValuts = USDCSAmount + ETHSAmount + BTCSAmount;
       setTotalUSDValuts(_totalUSDValuts);
+      console.log(result[2].vaultcap, result[2].totalStaked);
       setPool([
         {
           price: _prices[1][0] / Math.pow(10, 30),
@@ -120,6 +125,7 @@ export function TokenInfoProvider({ children }) {
           totalStaked: result[2].totalStaked,
           GDpriceToStakedToken: result[5][0],
           withdrawable: result[2].withdrawable,
+          vaultcap: result[2].vaultcap,
         },
         {
           price: _prices[2][0] / Math.pow(10, 30),
@@ -129,6 +135,7 @@ export function TokenInfoProvider({ children }) {
           totalStaked: result[3].totalStaked,
           GDpriceToStakedToken: result[6][0],
           withdrawable: result[3].withdrawable,
+          vaultcap: result[3].vaultcap,
         },
         {
           price: _prices[3][0] / Math.pow(10, 30),
@@ -138,6 +145,7 @@ export function TokenInfoProvider({ children }) {
           totalStaked: result[4].totalStaked,
           GDpriceToStakedToken: result[7][0],
           withdrawable: result[4].withdrawable,
+          vaultcap: result[4].vaultcap,
         },
         {
           price: 0,
@@ -147,6 +155,7 @@ export function TokenInfoProvider({ children }) {
           totalStaked: 0,
           GDpriceToStakedToken: 1,
           withdrawable: false,
+          vaultcap: 0,
         },
       ]);
     } catch (error) {

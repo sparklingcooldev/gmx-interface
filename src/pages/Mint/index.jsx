@@ -4,6 +4,8 @@
 /* eslint-disable jsx-a11y/alt-text */
 import { Box } from "@mui/material";
 import styled from "styled-components";
+import { PieChart, Pie, Cell, Tooltip } from "recharts";
+import hexToRgba from "hex-to-rgba";
 import Button from "../../components/Button";
 import MintModal from "../../components/MintModal";
 import CountDown from "../../components/CountDown";
@@ -78,6 +80,44 @@ const Mint = ({ setNotification }) => {
       figureError(error, setNotification);
     }
   };
+
+  let gmxDistributionData = [
+    {
+      name: "Remain Cap",
+      value: 100 - (mintData.totalSupply / mintData.mintCap) * 100,
+      color: "#4353fa",
+    },
+    {
+      name: "Total Supply",
+      value: (mintData.totalSupply / mintData.mintCap) * 100,
+      color: "#0598fa",
+    },
+  ];
+
+  const [gmxActiveIndex, setGMXActiveIndex] = useState(null);
+
+  const onGMXDistributionChartEnter = (_, index) => {
+    setGMXActiveIndex(index);
+  };
+
+  const onGMXDistributionChartLeave = (_, index) => {
+    setGMXActiveIndex(null);
+  };
+
+  const CustomTooltip = ({ active, payload }) => {
+    if (active && payload && payload.length) {
+      return (
+        <div className="stats-label">
+          <div
+            className="stats-label-color"
+            style={{ backgroundColor: payload[0].color }}
+          ></div>
+          {payload[0].value.toFixed(2)}% {payload[0].name}
+        </div>
+      );
+    }
+  };
+
   return (
     <StyledContainer>
       <MintModal
@@ -97,6 +137,7 @@ const Mint = ({ setNotification }) => {
         onMint={onMint}
         mintPrice={mintData.mintPrice}
         setNotification={setNotification}
+        mintOpen={mintData.mintOpen}
       />
       <Box fontSize={"34px"} mb={"8px"} fontWeight={"bold"}>
         <Box>Mint GMD</Box>
@@ -124,7 +165,10 @@ const Mint = ({ setNotification }) => {
             <Box>
               <Box color={"rgba(255, 255, 255, 0.7)"}>Mint Cap</Box>
               <Box>
-                {numberWithCommas(Number(mintData.mintCap).toFixed(5))} GMD
+                {numberWithCommas(
+                  Number(mintData.mintCap - mintData.totalSupply).toFixed(5)
+                )}{" "}
+                GMD
               </Box>
             </Box>
             <Box>
@@ -178,6 +222,66 @@ const Mint = ({ setNotification }) => {
                     Number(mintAccountData.claimableTokens).toFixed(5)
                   )}{" "}
                   GMD
+                </Box>
+              </Box>
+              <Box alignItems={"center"}>
+                <Box color={"rgba(255, 255, 255, 0.7)"}>Total Supply</Box>
+                <Box
+                  display={"flex"}
+                  flexDirection={"column"}
+                  alignItems={"center"}
+                >
+                  <PieChart width={160} height={160}>
+                    <Pie
+                      data={gmxDistributionData}
+                      cx={76}
+                      cy={76}
+                      innerRadius={50}
+                      outerRadius={63}
+                      fill="#8884d8"
+                      dataKey="value"
+                      startAngle={90}
+                      endAngle={-270}
+                      paddingAngle={2}
+                      onMouseEnter={onGMXDistributionChartEnter}
+                      onMouseOut={onGMXDistributionChartLeave}
+                      onMouseLeave={onGMXDistributionChartLeave}
+                    >
+                      {gmxDistributionData.map((entry, index) => (
+                        <Cell
+                          key={`cell-${index}`}
+                          fill={entry.color}
+                          style={{
+                            filter:
+                              gmxActiveIndex === index
+                                ? `drop-shadow(0px 0px 6px ${hexToRgba(
+                                    entry.color,
+                                    0.7
+                                  )})`
+                                : "none",
+                            cursor: "pointer",
+                          }}
+                          stroke={entry.color}
+                          strokeWidth={gmxActiveIndex === index ? 1 : 1}
+                        />
+                      ))}
+                    </Pie>
+                    <text
+                      x={"50%"}
+                      y={"50%"}
+                      fill="white"
+                      textAnchor="middle"
+                      dominantBaseline="middle"
+                      fontSize={"12px"}
+                    >
+                      Total / Mint
+                    </text>
+                    <Tooltip content={<CustomTooltip />} />
+                  </PieChart>
+                  <Box>
+                    {mintData.totalSupply.toFixed(2)} /{" "}
+                    {mintData.mintCap.toFixed(2)} GMD
+                  </Box>
                 </Box>
               </Box>
             </>

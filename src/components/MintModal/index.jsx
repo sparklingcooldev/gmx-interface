@@ -24,10 +24,19 @@ const MintModal = ({
   onMint,
   mintPrice,
   setNotification,
+  mintOpen,
 }) => {
   const [insufficient, setInsufficient] = useState(false);
   const { provider } = useWeb3Context();
   const { fetchMintAccountData, allowance } = useMintInfo();
+  const [buttonText, setButtonText] = useState("Mint is Closed");
+
+  useEffect(() => {
+    if (insufficient) setButtonText("Insufficient Amount");
+    else if (!mintOpen) setButtonText("Not Opened Mint");
+    else if (!Number(amount)) setButtonText("Input Amount");
+    else setButtonText("Confirm");
+  }, [mintOpen, insufficient, amount]);
 
   const onApprove = async (i) => {
     setPending(true);
@@ -103,19 +112,6 @@ const MintModal = ({
           >
             = {(mintPrice ? amount / mintPrice : 0.0).toFixed(4)} GMD
           </Box>
-          {insufficient ? (
-            <Box
-              textAlign={"right"}
-              color={"tomato"}
-              fontSize={"12px"}
-              mb={"10px"}
-              mt={"-10px"}
-            >
-              Insufficient Amount
-            </Box>
-          ) : (
-            ""
-          )}
 
           <Box>
             {allowance ? (
@@ -123,10 +119,10 @@ const MintModal = ({
                 type={"secondary"}
                 width={"100%"}
                 height={"47px"}
-                disabled={!Number(amount) || pending || insufficient}
+                disabled={pending || buttonText !== "Confirm"}
                 onClick={() => onMint()}
               >
-                Confirm
+                {buttonText}
               </Button>
             ) : (
               <Button

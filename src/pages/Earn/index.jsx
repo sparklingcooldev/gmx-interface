@@ -14,6 +14,8 @@ import { useAddress, useWeb3Context } from "../../hooks/web3Context";
 import { BTC_ADDR, ETH_ADDR, USDC_ADDR, VAULT_ADDR } from "../../abis/address";
 import { getTokenContract, getVaultContract } from "../../utils/contracts";
 import { ethers } from "ethers";
+import { PieChart, Pie, Cell, Tooltip } from "recharts";
+import hexToRgba from "hex-to-rgba";
 
 const Earn = ({ setNotification }) => {
   const { pool, fetchData } = useTokenInfo();
@@ -151,6 +153,30 @@ const Earn = ({ setNotification }) => {
     setPending(false);
   };
 
+  const [gmxActiveIndex, setGMXActiveIndex] = useState(null);
+
+  const onGMXDistributionChartEnter = (_, index) => {
+    setGMXActiveIndex(index);
+  };
+
+  const onGMXDistributionChartLeave = (_, index) => {
+    setGMXActiveIndex(null);
+  };
+
+  const CustomTooltip = ({ active, payload }) => {
+    if (active && payload && payload.length) {
+      return (
+        <div className="stats-label">
+          <div
+            className="stats-label-color"
+            style={{ backgroundColor: payload[0].color }}
+          ></div>
+          {payload[0].value.toFixed(2)}% {payload[0].name}
+        </div>
+      );
+    }
+  };
+
   return (
     <StyledContainer>
       <StakingModal
@@ -184,6 +210,18 @@ const Earn = ({ setNotification }) => {
       </Box>
       <Box display={"flex"} justifyContent={"space-between"} flexWrap={"wrap"}>
         {pool.map((data, i) => {
+          let gmxDistributionData = [
+            {
+              name: "Remain Cap",
+              value: 100 - (data.totalStaked / data.vaultcap) * 100,
+              color: "#4353fa",
+            },
+            {
+              name: "Total Staked",
+              value: (data.totalStaked / data.vaultcap) * 100,
+              color: "#0598fa",
+            },
+          ];
           return (
             <Panel key={i}>
               <PanelHeader>{symbol[i]}</PanelHeader>
@@ -262,13 +300,67 @@ const Earn = ({ setNotification }) => {
               </PanelBody>
               <Divider />
               <PanelBody>
-                <Box>
+                <Box alignItems={"center"}>
                   <Box color={"rgba(255, 255, 255, 0.7)"}>
                     Total Staked in Pool
                   </Box>
-                  <Box>
-                    {getBalance(pool[i].totalStaked, 1)} {symbol[i]} ($
-                    {getBalanceUSD(pool[i].totalStaked, pool[i].price, 1)})
+                  <Box
+                    display={"flex"}
+                    flexDirection={"column"}
+                    alignItems={"center"}
+                  >
+                    <PieChart width={160} height={160}>
+                      <Pie
+                        data={gmxDistributionData}
+                        cx={76}
+                        cy={76}
+                        innerRadius={50}
+                        outerRadius={63}
+                        fill="#8884d8"
+                        dataKey="value"
+                        startAngle={90}
+                        endAngle={-270}
+                        paddingAngle={2}
+                        onMouseEnter={onGMXDistributionChartEnter}
+                        onMouseOut={onGMXDistributionChartLeave}
+                        onMouseLeave={onGMXDistributionChartLeave}
+                      >
+                        {gmxDistributionData.map((entry, index) => (
+                          <Cell
+                            key={`cell-${index}`}
+                            fill={entry.color}
+                            style={{
+                              filter:
+                                gmxActiveIndex === index
+                                  ? `drop-shadow(0px 0px 6px ${hexToRgba(
+                                      entry.color,
+                                      0.7
+                                    )})`
+                                  : "none",
+                              cursor: "pointer",
+                            }}
+                            stroke={entry.color}
+                            strokeWidth={gmxActiveIndex === index ? 1 : 1}
+                          />
+                        ))}
+                      </Pie>
+                      <text
+                        x={"50%"}
+                        y={"50%"}
+                        fill="white"
+                        textAnchor="middle"
+                        dominantBaseline="middle"
+                        fontSize={"12px"}
+                      >
+                        Staked / Total
+                      </text>
+                      <Tooltip content={<CustomTooltip />} />
+                    </PieChart>
+                    <Box>
+                      {(pool[i].totalStaked / Math.pow(10, 18)).toFixed(2)} /{" "}
+                      {(pool[i].vaultcap / Math.pow(10, 18)).toFixed(2)}{" "}
+                      {symbol[i]}
+                    </Box>
                   </Box>
                 </Box>
                 <Box>

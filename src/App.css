@@ -164,3 +164,21 @@ a:hover svg {
 .MuiCheckbox-root {
   color: #f50057 !important;
 }
+
+.stats-label {
+  font-size: 12px;
+  line-height: 14px;
+  border-radius: 4px;
+  padding: 10px;
+  letter-spacing: 0.4px;
+  text-align: left;
+  z-index: 1;
+  background: linear-gradient(90deg, #0b0b0f 0%, rgba(10, 13, 28, 1) 100%);
+  cursor: pointer;
+}
+
+.stats-label-color {
+  width: 4px;
+  height: 100%;
+  margin-right: 15px;
+}

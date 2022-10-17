@@ -188,30 +188,15 @@ const Panel = styled(Box)`
   font-size: 15px;
   background: #16182e;
   width: 100%;
+  max-width: calc(50% - 8px);
   display: flex;
   justify-content: space-between;
   align-items: center;
 
   > div {
-    max-width: 500px;
+    /* max-width: 500px; */
   }
-  .stats-label {
-    font-size: 14px;
-    line-height: 16px;
-    border-radius: 4px;
-    padding: 10px;
-    letter-spacing: 0.4px;
-    text-align: left;
-    z-index: 1;
-    background: linear-gradient(90deg, #0b0b0f 0%, rgba(10, 13, 28, 1) 100%);
-    cursor: pointer;
-  }
-
-  .stats-label-color {
-    width: 4px;
-    height: 100%;
-    margin-right: 15px;
-  }
+  
   @media screen and (max-width: 1100px) {
     max-width: 100%;
   }
@@ -234,7 +219,7 @@ const GMXSVG = styled(Box)`
   background: url("/icons/gmd.png");
   background-size: 100% 100%;
   width: 40px;
-  height: 40px;
+  height: 45px;
 `;
 
 export default Tokens;

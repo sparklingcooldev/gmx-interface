@@ -26,7 +26,9 @@ const Stats = ({ setNotification }) => {
     },
   ];
 
-  const assets = [{ text: "GLP backing needed", value: GLPbackingNeeded }];
+  const assets = [
+    { text: "GLP backing needed", value: GLPbackingNeeded * GLPPrice },
+  ];
   return (
     <>
       <Box display={"flex"} alignItems={"center"}>

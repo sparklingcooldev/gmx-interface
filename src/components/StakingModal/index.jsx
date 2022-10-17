@@ -36,6 +36,7 @@ const StakingModal = ({
   const [insufficient, setInsufficient] = useState(false);
   const { provider } = useWeb3Context();
   const { fetchAccountData } = useLockInfo();
+  const [buttonText, setButtonText] = useState("Input Amount");
 
   const onApprove = async (i) => {
     setPending(true);
@@ -77,6 +78,15 @@ const StakingModal = ({
       setInsufficient(true);
     } else setInsufficient(false);
   }, [maxPressed, balance, amount]);
+
+  useEffect(() => {
+    if (!Number(amount)) setButtonText("Input Amount");
+    else if (insufficient) setButtonText("Insufficient Amount");
+    else if (type === 2 && !Number(gdBalance))
+      setButtonText("No Amount to Unstake");
+    else if (type === 2 && !withdrawable) setButtonText("Not Enabled Unstake");
+    else setButtonText("Confirm");
+  }, [insufficient, amount, type, gdBalance, withdrawable]);
 
   return (
     <Dialog open={open} onClose={() => setOpen(false)}>
@@ -156,15 +166,10 @@ const StakingModal = ({
                 type={"secondary"}
                 width={"100%"}
                 height={"47px"}
-                disabled={
-                  pending ||
-                  insufficient ||
-                  !Number(amount) ||
-                  (type === 2 && (!Number(gdBalance) || !withdrawable))
-                }
+                disabled={pending || !buttonText !== "Confirm"}
                 onClick={() => onConfirm()}
               >
-                Confirm
+                {buttonText}
               </Button>
             ) : (
               <Button
