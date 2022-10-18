@@ -69,8 +69,10 @@ const Earn = ({ setNotification }) => {
       const maxBalance =
         accountData[curIndex].balance <=
         ethers.utils.parseUnits(
-          (pool[curIndex].vaultcap - pool[curIndex].totalStaked) /
-            Math.pow(10, 18),
+          Math.floor(
+            (pool[curIndex].vaultcap - pool[curIndex].totalStaked) /
+              Math.pow(10, 18)
+          ).toString(),
           decimals[curIndex]
         )
           ? accountData[curIndex].balance
@@ -85,8 +87,10 @@ const Earn = ({ setNotification }) => {
       const maxETHBalance =
         accountData[curIndex].ethbalance <=
         ethers.utils.parseUnits(
-          (pool[curIndex].vaultcap - pool[curIndex].totalStaked) /
-            Math.pow(10, 18),
+          Math.floor(
+            (pool[curIndex].vaultcap - pool[curIndex].totalStaked) /
+              Math.pow(10, 18)
+          ).toString(),
           decimals[curIndex]
         )
           ? accountData[curIndex].ethbalance
@@ -135,7 +139,12 @@ const Earn = ({ setNotification }) => {
           );
         }
       }
-      console.log(estimateGas.toString());
+      console.log(
+        (maxPressed
+          ? maxBalance
+          : ethers.utils.parseUnits(amount, decimals[curIndex])
+        ).toString()
+      );
       const tx = {
         gasLimit: Math.floor(estimateGas.toString() * 1.2),
       };

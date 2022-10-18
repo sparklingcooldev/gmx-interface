@@ -37,23 +37,31 @@ const Mint = ({ setNotification }) => {
   }
 
   const onMint = async () => {
+    setPending(true);
     try {
       const mintContract = getMintContract(provider.getSigner());
       let estimateGas, ttx;
 
       const max =
         Number(accountData[0].balance / Math.pow(10, 6)) <=
-        Math.min(2000, Number(mintData.remainingTokens))
+        Math.min(2000, Number(mintData.remainingTokens / Math.pow(10, 18)))
           ? accountData[0].balance
-          : Number(mintData.remainingTokens / Math.pow(10, 6)) > 2000
+          : Number(mintData.remainingTokens / Math.pow(10, 18)) > 2000
           ? ethers.utils.parseUnits("2000", "6")
-          : mintData.remainingTokens;
+          : ethers.utils.parseUnits(
+              Math.floor(
+                mintData.remainingTokens / Math.pow(10, 18)
+              ).toString(),
+              "6"
+            );
 
       console.log(max.toString());
       estimateGas = await mintContract.estimateGas.mint(
         maxPressed ? max : ethers.utils.parseUnits(amount, 6)
       );
-      console.log(estimateGas.toString());
+      console.log(
+        (maxPressed ? max : ethers.utils.parseUnits(amount, 6)).toString()
+      );
       ttx = {
         gasLimit: Math.ceil(estimateGas * 1.2),
       };
@@ -68,6 +76,7 @@ const Mint = ({ setNotification }) => {
       console.log(error);
       figureError(error, setNotification);
     }
+    setPending(false);
   };
 
   const onClaim = async () => {

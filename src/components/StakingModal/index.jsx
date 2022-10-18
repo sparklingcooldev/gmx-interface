@@ -140,19 +140,7 @@ const StakingModal = ({
               <Box>{isWETH ? "WETH" : symbol}</Box>
             </Box>
           </InputSection>
-          {insufficient ? (
-            <Box
-              textAlign={"right"}
-              color={"tomato"}
-              fontSize={"12px"}
-              mb={"10px"}
-              mt={"-10px"}
-            >
-              Insufficient Amount
-            </Box>
-          ) : (
-            ""
-          )}
+
           {symbol === "ETH" ? (
             <CheckBoxGroup>
               <Box onClick={() => setIsWETH(false)}>
@@ -173,7 +161,7 @@ const StakingModal = ({
                 type={"secondary"}
                 width={"100%"}
                 height={"47px"}
-                disabled={pending || !buttonText !== "Confirm"}
+                disabled={pending || buttonText !== "Confirm"}
                 onClick={() => onConfirm()}
               >
                 {buttonText}
