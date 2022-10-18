@@ -287,7 +287,8 @@ const Mint = ({ setNotification }) => {
                   </PieChart>
                   <Box>
                     {mintData.totalSupply.toFixed(2)} /{" "}
-                    {mintData.mintCap.toFixed(2)} GMD
+                    {mintData.mintCap.toFixed(2)} GMD{" "}
+                    {!Number(mintData.remainingTokens) ? "(Sold Out)" : ""}
                   </Box>
                 </Box>
               </Box>
@@ -310,7 +311,7 @@ const Mint = ({ setNotification }) => {
                   type={"primary"}
                   width={"80px"}
                   height={"36px"}
-                  disabled={pending}
+                  disabled={pending || !Number(mintData.remainingTokens)}
                   onClick={() => setOpen(true)}
                 >
                   Mint
