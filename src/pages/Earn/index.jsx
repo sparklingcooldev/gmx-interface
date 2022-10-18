@@ -75,8 +75,10 @@ const Earn = ({ setNotification }) => {
         )
           ? accountData[curIndex].balance
           : ethers.utils.parseUnits(
-              (pool[curIndex].vaultcap - pool[curIndex].totalStaked) /
-                Math.pow(10, 18),
+              Math.floor(
+                (pool[curIndex].vaultcap - pool[curIndex].totalStaked) /
+                  Math.pow(10, 18)
+              ).toString(),
               decimals[curIndex]
             );
 
@@ -89,8 +91,10 @@ const Earn = ({ setNotification }) => {
         )
           ? accountData[curIndex].ethbalance
           : ethers.utils.parseUnits(
-              (pool[curIndex].vaultcap - pool[curIndex].totalStaked) /
-                Math.pow(10, 18),
+              Math.floor(
+                (pool[curIndex].vaultcap - pool[curIndex].totalStaked) /
+                  Math.pow(10, 18)
+              ).toString(),
               decimals[curIndex]
             );
 

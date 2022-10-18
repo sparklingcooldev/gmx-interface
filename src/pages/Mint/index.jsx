@@ -156,6 +156,7 @@ const Mint = ({ setNotification }) => {
       <Box display={"flex"} justifyContent={"space-between"} flexWrap={"wrap"}>
         <Panel>
           <PanelHeader>
+            <CoinSVG mr={"8px"} />
             <Box>GMD</Box>
           </PanelHeader>
           <Divider />
@@ -362,7 +363,6 @@ const PanelHeader = styled(Box)`
   margin-bottom: 15px;
   display: flex;
   align-items: center;
-  justify-content: space-between;
 `;
 
 const PanelBody = styled(Box)`
@@ -398,5 +398,10 @@ const StyledContainer = styled(Box)`
     padding-right: 22px;
   }
 `;
-
+const CoinSVG = styled(Box)`
+  background-image: url("/icons/gmd.png");
+  background-size: 100% 100%;
+  width: 35px;
+  height: 40px;
+`;
 export default Mint;
