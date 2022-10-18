@@ -69,24 +69,28 @@ const Earn = ({ setNotification }) => {
       const maxBalance =
         accountData[curIndex].balance <=
         ethers.utils.parseUnits(
-          pool[curIndex].vaultcap - pool[curIndex].totalStaked,
+          (pool[curIndex].vaultcap - pool[curIndex].totalStaked) /
+            Math.pow(10, 18),
           decimals[curIndex]
         )
           ? accountData[curIndex].balance
           : ethers.utils.parseUnits(
-              pool[curIndex].vaultcap - pool[curIndex].totalStaked,
+              (pool[curIndex].vaultcap - pool[curIndex].totalStaked) /
+                Math.pow(10, 18),
               decimals[curIndex]
             );
 
       const maxETHBalance =
         accountData[curIndex].ethbalance <=
         ethers.utils.parseUnits(
-          pool[curIndex].vaultcap - pool[curIndex].totalStaked,
+          (pool[curIndex].vaultcap - pool[curIndex].totalStaked) /
+            Math.pow(10, 18),
           decimals[curIndex]
         )
           ? accountData[curIndex].ethbalance
           : ethers.utils.parseUnits(
-              pool[curIndex].vaultcap - pool[curIndex].totalStaked,
+              (pool[curIndex].vaultcap - pool[curIndex].totalStaked) /
+                Math.pow(10, 18),
               decimals[curIndex]
             );
 

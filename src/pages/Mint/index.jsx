@@ -40,14 +40,15 @@ const Mint = ({ setNotification }) => {
     try {
       const mintContract = getMintContract(provider.getSigner());
       let estimateGas, ttx;
+
       const max =
         Number(accountData[0].balance / Math.pow(10, 6)) <=
         Math.min(2000, Number(mintData.remainingTokens))
           ? accountData[0].balance
-          : ethers.utils.parseUnits(
-              Math.min(2000, Number(mintData.remainingTokens)),
-              6
-            );
+          : Number(mintData.remainingTokens / Math.pow(10, 6)) > 2000
+          ? ethers.utils.parseUnits("2000", "6")
+          : mintData.remainingTokens;
+
       console.log(max.toString());
       estimateGas = await mintContract.estimateGas.mint(
         maxPressed ? max : ethers.utils.parseUnits(amount, 6)
@@ -132,7 +133,7 @@ const Mint = ({ setNotification }) => {
         setOpen={setOpen}
         max={Math.min(
           2000,
-          Number(mintData.remainingTokens),
+          Number(mintData.remainingTokens / Math.pow(10, 18)),
           Number(accountData[0].balance / Math.pow(10, 6))
         )}
         amount={amount}
@@ -288,7 +289,9 @@ const Mint = ({ setNotification }) => {
                   <Box>
                     {mintData.totalSupply.toFixed(2)} /{" "}
                     {mintData.mintCap.toFixed(2)} GMD{" "}
-                    {!Number(mintData.remainingTokens) ? "(Sold Out)" : ""}
+                    {!Number(mintData.remainingTokens / Math.pow(10, 18))
+                      ? "(Sold Out)"
+                      : ""}
                   </Box>
                 </Box>
               </Box>
@@ -311,7 +314,10 @@ const Mint = ({ setNotification }) => {
                   type={"primary"}
                   width={"80px"}
                   height={"36px"}
-                  disabled={pending || !Number(mintData.remainingTokens)}
+                  disabled={
+                    pending ||
+                    !Number(mintData.remainingTokens / Math.pow(10, 18))
+                  }
                   onClick={() => setOpen(true)}
                 >
                   Mint

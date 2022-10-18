@@ -74,7 +74,7 @@ export function MintInfoProvider({ children }) {
       setMintData({
         mintPrice: result[0][0] / 1000,
         mintCap: result[1][0] / Math.pow(10, 18),
-        remainingTokens: result[2][0] / Math.pow(10, 18),
+        remainingTokens: result[2][0],
         mintOpen: result[4][0],
         totalSupply: result[3][0] / Math.pow(10, 18),
       });
