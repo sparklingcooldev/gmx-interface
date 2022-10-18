@@ -19,7 +19,7 @@ import { PieChart, Pie, Cell, Tooltip } from "recharts";
 import hexToRgba from "hex-to-rgba";
 
 const Earn = ({ setNotification }) => {
-  const { pool, fetchData } = useTokenInfo();
+  const { pool, fetchData, price } = useTokenInfo();
   const { accountData, fetchAccountData } = useLockInfo();
   const account = useAddress();
   const { connect, provider } = useWeb3Context();
@@ -265,7 +265,12 @@ const Earn = ({ setNotification }) => {
               <PanelBody>
                 <Box>
                   <Box color={"rgba(255, 255, 255, 0.7)"}>Price</Box>
-                  <Box>${numberWithCommas(data.price.toFixed(2))}</Box>
+                  <Box>
+                    $
+                    {numberWithCommas(
+                      i === 3 ? price.toFixed(2) : data.price.toFixed(2)
+                    )}
+                  </Box>
                 </Box>
                 <Box>
                   <Box color={"rgba(255, 255, 255, 0.7)"}>Wallet</Box>

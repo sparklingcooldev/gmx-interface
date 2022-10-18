@@ -17,8 +17,10 @@ import { useAddress, useWeb3Context } from "../../hooks/web3Context";
 import { getMintContract } from "../../utils/contracts";
 import { ethers } from "ethers";
 import useMintInfo from "../../hooks/useMintInfo";
+import useTokenInfo from "../../hooks/useTokenInfo";
 
 const Mint = ({ setNotification }) => {
+  const { price } = useTokenInfo();
   const { accountData, fetchAccountData } = useLockInfo();
   const { mintData, mintAccountData, fetchMintData, fetchMintAccountData } =
     useMintInfo();
@@ -177,7 +179,7 @@ const Mint = ({ setNotification }) => {
           <PanelBody>
             <Box>
               <Box color={"rgba(255, 255, 255, 0.7)"}>Market Price</Box>
-              <Box></Box>
+              <Box>${numberWithCommas(Number(price).toFixed(2))}</Box>
             </Box>
             <Box>
               <Box color={"rgba(255, 255, 255, 0.7)"}>Mint Price</Box>
