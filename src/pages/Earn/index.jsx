@@ -397,7 +397,7 @@ const Earn = ({ setNotification }) => {
                       {(pool[i].totalStaked / Math.pow(10, 18)).toFixed(2)} /{" "}
                       {(pool[i].vaultcap / Math.pow(10, 18)).toFixed(2)}{" "}
                       {symbol[i]}{" "}
-                      {pool[i].totalStaked === pool[i].valutcap
+                      {BigInt(pool[i].totalStaked) >= BigInt(pool[i].vaultcap)
                         ? "(Fully Reached)"
                         : ""}
                     </Box>
@@ -428,7 +428,8 @@ const Earn = ({ setNotification }) => {
                       height={"36px"}
                       disabled={
                         pending ||
-                        pool[i].totalStaked === pool[i].valutcap ||
+                        BigInt(pool[i].totalStaked) >=
+                          BigInt(pool[i].vaultcap) ||
                         !pool[i].stakable
                       }
                       onClick={() => {

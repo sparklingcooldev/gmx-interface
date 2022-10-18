@@ -54,13 +54,13 @@ const Tokens = () => {
   };
 
   const GMD = [
-    { text: "Price", value: "$0.00000" },
+    { text: "Price", value: "$0.00" },
     {
       text: "Supply",
       value: `${numberWithCommas(mintData.totalSupply.toFixed(2))} GMD`,
     },
-    { text: "Total Staked", value: "$0.00000" },
-    { text: "Market Cap", value: "$0.00000" },
+    { text: "Total Staked", value: "$0.00" },
+    { text: "Market Cap", value: "$0.00" },
   ];
 
   return (
