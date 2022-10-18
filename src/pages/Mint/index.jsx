@@ -159,8 +159,12 @@ const Mint = ({ setNotification }) => {
       <Box fontSize={"34px"} mb={"8px"} fontWeight={"bold"}>
         <Box>Mint GMD</Box>
         <Box fontSize={"16px"} fontWeight={"400"} mt={"15px"}>
-          Reminder: new mint will reset your vesting period for all of your
-          minted tokens
+          Minted GMD will be vested over 5 days
+          <br />
+          <Box fontSize={"13px"} color={"lightgrey"}>
+            Reminder: new mint will reset your vesting period for all of your
+            minted tokens
+          </Box>
         </Box>
       </Box>
       <Box display={"flex"} justifyContent={"space-between"} flexWrap={"wrap"}>
