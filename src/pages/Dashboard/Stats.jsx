@@ -14,15 +14,15 @@ const Stats = ({ setNotification }) => {
   const overviews = [
     {
       text: "AUM",
-      value: <Box>${numberWithCommas(totalUSDValuts.toFixed(5))}</Box>,
+      value: <Box>${numberWithCommas(totalUSDValuts.toFixed(2))}</Box>,
     },
     {
       text: "GLP managed",
       value: (
         <Box>
-          {numberWithCommas(GLPinVault.toFixed(5))} ($
+          {numberWithCommas(GLPinVault.toFixed(2))} ($
           {numberWithCommas(
-            (GLPPrice * GLPinVault * Math.pow(10, 6)).toFixed(5)
+            (GLPPrice * GLPinVault * Math.pow(10, 6)).toFixed(2)
           )}
           )
         </Box>
@@ -30,7 +30,7 @@ const Stats = ({ setNotification }) => {
     },
     {
       text: "Total Fees",
-      value: totalFees,
+      value: totalFees.toFixed(2),
     },
   ];
 
@@ -39,9 +39,9 @@ const Stats = ({ setNotification }) => {
       text: "GLP backing needed",
       value: (
         <Box>
-          {numberWithCommas(GLPbackingNeeded.toFixed(5))} ($
+          {numberWithCommas(GLPbackingNeeded.toFixed(2))} ($
           {numberWithCommas(
-            (GLPPrice * GLPbackingNeeded * Math.pow(10, 6)).toFixed(5)
+            (GLPPrice * GLPbackingNeeded * Math.pow(10, 6)).toFixed(2)
           )}
           )
         </Box>

@@ -57,7 +57,7 @@ const Tokens = () => {
     { text: "Price", value: "$0.00000" },
     {
       text: "Supply",
-      value: `${numberWithCommas(mintData.totalSupply.toFixed(5))} GMD`,
+      value: `${numberWithCommas(mintData.totalSupply.toFixed(2))} GMD`,
     },
     { text: "Total Staked", value: "$0.00000" },
     { text: "Market Cap", value: "$0.00000" },
