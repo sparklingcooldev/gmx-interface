@@ -1,10 +1,7 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from "react";
-import {
-  getPriceContract,
-  getVaultContract,
-  multicall,
-} from "../utils/contracts";
+import { multicall } from "../utils/contracts";
 import PriceABI from "../abis/PriceABI.json";
 import ValutABI from "../abis/ValutABI.json";
 import {
@@ -14,7 +11,12 @@ import {
   USDC_ADDR,
   VAULT_ADDR,
 } from "../abis/address";
-import axios from "axios";
+
+import { Token } from "@uniswap/sdk-core";
+import IUniswapV3Pool from "../abis/IUniswapV3Pool.json";
+
+import { Pool } from "@uniswap/v3-sdk/";
+import { ethers } from "ethers";
 
 const defaultVal = {
   fetchData: () => {},
@@ -23,6 +25,7 @@ const defaultVal = {
   GLPPrice: 0,
   totalFees: 0,
   GLPbackingNeeded: 0,
+  price: 0,
   pool: [{}, {}, {}],
 };
 
@@ -33,12 +36,22 @@ export default function useTokenInfo() {
 }
 let dataid = null;
 
+const provider = new ethers.providers.JsonRpcProvider(
+  "https://arb1.arbitrum.io/rpc"
+);
+
+// pool address for DAI/USDC 0.05%
+const poolAddress = "0xF82D8ecFbCd7845e40E97EE7f6BAb12cD921Dd03";
+
+const poolContract = new ethers.Contract(poolAddress, IUniswapV3Pool, provider);
+
 export function TokenInfoProvider({ children }) {
   const [totalUSDValuts, setTotalUSDValuts] = useState(0);
   const [GLPinVault, setGLPInValut] = useState(0);
   const [GLPPrice, setGLPPrice] = useState(0);
   const [totalFees, setTotalFees] = useState(0);
   const [GLPbackingNeeded, setGLPBackingNeeded] = useState(0);
+  const [price, setPrice] = useState(0);
 
   const [pool, setPool] = useState([
     {
@@ -175,10 +188,61 @@ export function TokenInfoProvider({ children }) {
     }
   }
 
+  async function getPoolImmutables() {
+    const immutables = {
+      factory: await poolContract.factory(),
+      token0: await poolContract.token0(),
+      token1: await poolContract.token1(),
+      fee: await poolContract.fee(),
+      tickSpacing: await poolContract.tickSpacing(),
+      maxLiquidityPerTick: await poolContract.maxLiquidityPerTick(),
+    };
+    return immutables;
+  }
+
+  async function getPoolState() {
+    const slot = await poolContract.slot0();
+    const PoolState = {
+      liquidity: await poolContract.liquidity(),
+      sqrtPriceX96: slot[0],
+      tick: slot[1],
+      observationIndex: slot[2],
+      observationCardinality: slot[3],
+      observationCardinalityNext: slot[4],
+      feeProtocol: slot[5],
+      unlocked: slot[6],
+    };
+    return PoolState;
+  }
+
+  async function fetchPrice() {
+    const immutables = await getPoolImmutables();
+    const state = await getPoolState();
+    const DAI = new Token(42161, immutables.token0, 18, "GMD", "GMD Coin");
+    const USDC = new Token(42161, immutables.token1, 6, "USDC", "USD Coin");
+    console.log(immutables, state);
+
+    //create a pool
+    const DAI_USDC_POOL = new Pool(
+      USDC,
+      DAI,
+      immutables.fee,
+      state.sqrtPriceX96.toString(),
+      state.liquidity.toString(),
+      state.tick
+    );
+    const price1 = await DAI_USDC_POOL.token0Price;
+    const price2 = await DAI_USDC_POOL.token1Price;
+    console.log("Price", price1.toFixed(10), price2.toFixed(10));
+    setPrice(Number(price1.toFixed(10)));
+  }
+
   useEffect(() => {
     fetchData();
+    fetchPrice();
     if (dataid) clearInterval(dataid);
     dataid = setInterval(() => {
+      fetchPrice();
       fetchData();
     }, 20000);
   }, []);
@@ -186,6 +250,7 @@ export function TokenInfoProvider({ children }) {
   return (
     <TokenInfoContext.Provider
       value={{
+        price,
         totalUSDValuts,
         GLPinVault,
         GLPPrice,

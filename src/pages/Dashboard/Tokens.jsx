@@ -8,9 +8,12 @@ import hexToRgba from "hex-to-rgba";
 import { useState } from "react";
 import useMintInfo from "../../hooks/useMintInfo";
 import { numberWithCommas } from "../../utils/functions";
+import useTokenInfo from "../../hooks/useTokenInfo";
 
 const Tokens = () => {
   const { mintData } = useMintInfo();
+  const { price } = useTokenInfo();
+
   let gmxDistributionData = [
     {
       name: "staked",
@@ -54,13 +57,19 @@ const Tokens = () => {
   };
 
   const GMD = [
-    { text: "Price", value: "$0.00" },
+    { text: "Price", value: `$${price.toFixed(2)}` },
     {
       text: "Supply",
       value: `${numberWithCommas(mintData.totalSupply.toFixed(2))} GMD`,
     },
-    { text: "Total Staked", value: "$0.00" },
-    { text: "Market Cap", value: "$0.00" },
+    {
+      text: "Total Staked",
+      value: `$0.00`,
+    },
+    {
+      text: "Market Cap",
+      value: `$${(price * mintData.totalSupply).toFixed(2)}`,
+    },
   ];
 
   return (
