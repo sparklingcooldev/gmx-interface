@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 /* eslint-disable no-unused-vars */
 /* eslint-disable jsx-a11y/anchor-is-valid */
 /* eslint-disable react-hooks/exhaustive-deps */
@@ -64,44 +65,22 @@ const Earn = ({ setNotification }) => {
       const valutContract = getVaultContract(provider.getSigner());
       let rate =
         ethers.utils.parseEther("1") / pool[curIndex].GDpriceToStakedToken;
-      console.log(rate);
-      let estimateGas, ttx;
+
+      const limitamount =
+        (BigInt(pool[curIndex].vaultcap) - BigInt(pool[curIndex].totalStaked)) /
+        BigInt(Math.pow(10, 18 - decimals[curIndex] / 1));
+
       const maxBalance =
-        accountData[curIndex].balance <=
-        ethers.utils.parseUnits(
-          Math.floor(
-            (pool[curIndex].vaultcap - pool[curIndex].totalStaked) /
-              Math.pow(10, 18)
-          ).toString(),
-          decimals[curIndex]
-        )
+        BigInt(accountData[curIndex].balance) <= limitamount
           ? accountData[curIndex].balance
-          : ethers.utils.parseUnits(
-              Math.floor(
-                (pool[curIndex].vaultcap - pool[curIndex].totalStaked) /
-                  Math.pow(10, 18)
-              ).toString(),
-              decimals[curIndex]
-            );
+          : limitamount.toString();
 
       const maxETHBalance =
-        accountData[curIndex].ethbalance <=
-        ethers.utils.parseUnits(
-          Math.floor(
-            (pool[curIndex].vaultcap - pool[curIndex].totalStaked) /
-              Math.pow(10, 18)
-          ).toString(),
-          decimals[curIndex]
-        )
-          ? accountData[curIndex].ethbalance
-          : ethers.utils.parseUnits(
-              Math.floor(
-                (pool[curIndex].vaultcap - pool[curIndex].totalStaked) /
-                  Math.pow(10, 18)
-              ).toString(),
-              decimals[curIndex]
-            );
+        BigInt(accountData[curIndex].ethBalance) <= limitamount
+          ? accountData[curIndex].ethBalance
+          : limitamount.toString();
 
+      let estimateGas, ttx;
       if (type === 1) {
         if (!isWETH && curIndex === 1) {
           estimateGas = await valutContract.estimateGas.enterETH(curIndex, {
@@ -139,12 +118,7 @@ const Earn = ({ setNotification }) => {
           );
         }
       }
-      console.log(
-        (maxPressed
-          ? maxBalance
-          : ethers.utils.parseUnits(amount, decimals[curIndex])
-        ).toString()
-      );
+
       const tx = {
         gasLimit: Math.floor(estimateGas.toString() * 1.2),
       };
@@ -314,7 +288,7 @@ const Earn = ({ setNotification }) => {
                   </Box>
                 </Box>
                 <Box>
-                  <Box color={"rgba(255, 255, 255, 0.7)"}>APR</Box>
+                  <Box color={"rgba(255, 255, 255, 0.7)"}>APY</Box>
                   <Box>{pool[i].apr}%</Box>
                 </Box>
               </PanelBody>

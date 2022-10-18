@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 /* eslint-disable no-unused-vars */
 /* eslint-disable jsx-a11y/anchor-is-valid */
 /* eslint-disable react-hooks/exhaustive-deps */
@@ -42,20 +43,17 @@ const Mint = ({ setNotification }) => {
       const mintContract = getMintContract(provider.getSigner());
       let estimateGas, ttx;
 
+      const limitamount =
+        BigInt(mintData.remainingTokens) / BigInt(Math.pow(10, 12));
+
       const max =
         Number(accountData[0].balance / Math.pow(10, 6)) <=
         Math.min(2000, Number(mintData.remainingTokens / Math.pow(10, 18)))
           ? accountData[0].balance
-          : Number(mintData.remainingTokens / Math.pow(10, 18)) > 2000
+          : limitamount > BigInt(ethers.utils.parseUnits("2000", "6"))
           ? ethers.utils.parseUnits("2000", "6")
-          : ethers.utils.parseUnits(
-              Math.floor(
-                mintData.remainingTokens / Math.pow(10, 18)
-              ).toString(),
-              "6"
-            );
+          : limitamount.toString();
 
-      console.log(max.toString());
       estimateGas = await mintContract.estimateGas.mint(
         maxPressed ? max : ethers.utils.parseUnits(amount, 6)
       );
@@ -159,7 +157,8 @@ const Mint = ({ setNotification }) => {
       <Box fontSize={"34px"} mb={"8px"} fontWeight={"bold"}>
         <Box>Mint GMD</Box>
         <Box fontSize={"16px"} fontWeight={"400"} mt={"15px"}>
-          Minted GMD will be vested over 5 days
+          Reminder: new mint will reset your vesting period for all of your
+          minted tokens
         </Box>
       </Box>
       <Box display={"flex"} justifyContent={"space-between"} flexWrap={"wrap"}>
