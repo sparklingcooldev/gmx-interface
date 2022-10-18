@@ -41,14 +41,14 @@ const Mint = ({ setNotification }) => {
       const mintContract = getMintContract(provider.getSigner());
       let estimateGas, ttx;
       const max =
-        Number(accountData[0].balance / Math.pow(10, 6)) >
+        Number(accountData[0].balance / Math.pow(10, 6)) <=
         Math.min(2000, Number(mintData.remainingTokens))
           ? accountData[0].balance
           : ethers.utils.parseUnits(
               Math.min(2000, Number(mintData.remainingTokens)),
               6
             );
-
+      console.log(max.toString());
       estimateGas = await mintContract.estimateGas.mint(
         maxPressed ? max : ethers.utils.parseUnits(amount, 6)
       );

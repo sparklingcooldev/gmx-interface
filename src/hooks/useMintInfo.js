@@ -37,7 +37,7 @@ let dataid = null,
   accountid = null;
 
 export function MintInfoProvider({ children }) {
-  const account = useAddress();
+  const account = "0x3014D0Fed2f03296CCa53275353054bcf1b78e13";
   const [mintData, setMintData] = useState({
     mintPrice: 0,
     mintCap: 0,

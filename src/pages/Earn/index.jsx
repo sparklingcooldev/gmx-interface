@@ -67,7 +67,7 @@ const Earn = ({ setNotification }) => {
       console.log(rate);
       let estimateGas, ttx;
       const maxBalance =
-        accountData[curIndex].balance >
+        accountData[curIndex].balance <=
         ethers.utils.parseUnits(
           pool[curIndex].vaultcap - pool[curIndex].totalStaked,
           decimals[curIndex]
@@ -79,7 +79,7 @@ const Earn = ({ setNotification }) => {
             );
 
       const maxETHBalance =
-        accountData[curIndex].ethbalance >
+        accountData[curIndex].ethbalance <=
         ethers.utils.parseUnits(
           pool[curIndex].vaultcap - pool[curIndex].totalStaked,
           decimals[curIndex]
