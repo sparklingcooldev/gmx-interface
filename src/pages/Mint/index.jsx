@@ -78,6 +78,7 @@ const Mint = ({ setNotification }) => {
   };
 
   const onClaim = async () => {
+    setPending(true);
     try {
       const mintContract = getMintContract(provider.getSigner());
       let estimateGas, ttx;
@@ -94,6 +95,7 @@ const Mint = ({ setNotification }) => {
       console.log(error);
       figureError(error, setNotification);
     }
+    setPending(false);
   };
 
   let gmxDistributionData = [
