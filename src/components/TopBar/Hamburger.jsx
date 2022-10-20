@@ -17,7 +17,7 @@ const Hamburger = ({ activePage, setActivePage }) => {
     });
   }, []);
 
-  const menus = ["Dashboard", "Earn", "Mint GMD"];
+  const menus = ["Dashboard", "Earn", "Mint GMD", "Stake"];
 
   return (
     <nav role="navigation" style={{ background: "red" }}>

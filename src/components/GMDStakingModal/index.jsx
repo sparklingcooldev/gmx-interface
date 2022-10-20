@@ -5,46 +5,37 @@ import { AiOutlineClose } from "react-icons/ai";
 import Button from "../Button";
 import { useState } from "react";
 import { useEffect } from "react";
-import { VAULT_ADDR } from "../../abis/address";
+import { GMD_ADDR, GMD_STAKING_ADDR } from "../../abis/address";
 import { getTokenContract } from "../../utils/contracts";
 import { useWeb3Context } from "../../hooks/web3Context";
-import useLockInfo from "../../hooks/useLockInfo";
 import { figureError } from "../../utils/functions";
+import useGMDStakingInfo from "../../hooks/useGMDStakingInfo";
 
 const StakingModal = ({
   open,
   setOpen,
-  type,
-  amount,
-  setAmount,
-  balance,
   maxPressed,
   setMaxPressed,
+  onConfirm,
   pending,
   setPending,
-  symbol,
-  onConfirm,
-  allowance,
-  address,
   setNotification,
-  isWETH,
-  setIsWETH,
-  ethBalance,
-  withdrawable,
-  gdBalance,
-  limit,
+  max,
+  amount,
+  setAmount,
+  type
 }) => {
   const [insufficient, setInsufficient] = useState(false);
   const { provider } = useWeb3Context();
-  const { fetchAccountData } = useLockInfo();
+  const { allowance, fetchStakingAccountData } = useGMDStakingInfo();
   const [buttonText, setButtonText] = useState("Input Amount");
 
   const onApprove = async (i) => {
     setPending(true);
     try {
-      const tokenContract = getTokenContract(address, provider.getSigner());
+      const tokenContract = getTokenContract(GMD_ADDR, provider.getSigner());
       const estimateGas = await tokenContract.estimateGas.approve(
-        VAULT_ADDR,
+        GMD_STAKING_ADDR,
         "115792089237316195423570985008687907853269984665640564039457584007913129639935"
       );
       console.log(estimateGas.toString());
@@ -53,12 +44,12 @@ const StakingModal = ({
         gasLimit: estimateGas.toString(),
       };
       const approveTx = await tokenContract.approve(
-        VAULT_ADDR,
+        GMD_STAKING_ADDR,
         "115792089237316195423570985008687907853269984665640564039457584007913129639935",
         tx
       );
       await approveTx.wait();
-      fetchAccountData();
+      fetchStakingAccountData();
     } catch (error) {
       console.log(error);
       figureError(error, setNotification);
@@ -67,36 +58,24 @@ const StakingModal = ({
   };
 
   useEffect(() => {
-    console.log(maxPressed);
-
-    if (
-      Number(amount) >
-      Number(
-        type === 1 ? (symbol === "ETH" && !isWETH)
-          ? Math.min(ethBalance, limit)
-          : Math.min(balance, limit) : balance
-      ) &&
-      !maxPressed
-    ) {
+    if (amount > max && !maxPressed)
       setInsufficient(true);
-    } else setInsufficient(false);
-  }, [maxPressed, balance, amount, limit]);
+    else
+      setInsufficient(false);
+  }, [maxPressed, amount]);
 
   useEffect(() => {
     if (!Number(amount)) setButtonText("Input Amount");
     else if (insufficient) setButtonText("Insufficient Amount");
-    else if (type === 2 && !Number(gdBalance))
-      setButtonText("No Amount to Unstake");
-    else if (type === 2 && !withdrawable) setButtonText("Not Enabled Unstake");
-    else setButtonText("Confirm");
-  }, [insufficient, amount, type, gdBalance, withdrawable]);
+    else setButtonText("Confirm")
+  }, [insufficient, amount]);
 
   return (
     <Dialog open={open} onClose={() => setOpen(false)}>
       <Panel>
         <DialogHeader>
           <Box>
-            {type === 1 ? "Stake" : "Unstake"} {symbol}
+            {type === 1 ? "Stake" : "Unstake"} GMD
           </Box>
           <AiOutlineClose cursor={"pointer"} onClick={() => setOpen(false)} />
         </DialogHeader>
@@ -108,23 +87,11 @@ const StakingModal = ({
               <MaxButton
                 onClick={() => {
                   setMaxPressed(true);
-                  setAmount(
-                    Math.min(
-                      type === 1 && symbol === "ETH" && !isWETH
-                        ? ethBalance
-                        : balance,
-                      type === 1 ? limit : 1000000000000000
-                    ).toFixed(6)
-                  );
+                  setAmount(max.toFixed(6))
                 }}
               >
                 Max:{" "}
-                {Math.min(
-                  type === 1 && symbol === "ETH" && !isWETH
-                    ? ethBalance
-                    : balance,
-                  type === 1 ? limit : 1000000000000000
-                ).toFixed(4)}
+                {max.toFixed(4)}
               </MaxButton>
             </Box>
             <Box>
@@ -137,26 +104,13 @@ const StakingModal = ({
                 }}
                 placeholder={"0.00"}
               />
-              <Box>{isWETH ? "WETH" : symbol}</Box>
+              <Box>GMD</Box>
             </Box>
           </InputSection>
 
-          {symbol === "ETH" ? (
-            <CheckBoxGroup>
-              <Box onClick={() => setIsWETH(false)}>
-                <input type={"radio"} checked={!isWETH} />
-                <Box>ETH</Box>
-              </Box>
-              <Box onClick={() => setIsWETH(true)}>
-                <input type={"radio"} checked={isWETH} />
-                <Box>WETH</Box>
-              </Box>
-            </CheckBoxGroup>
-          ) : (
-            ""
-          )}
+
           <Box>
-            {allowance || type === 2 || (symbol === "ETH" && !isWETH) ? (
+            {(allowance || type === 2) ?
               <Button
                 type={"secondary"}
                 width={"100%"}
@@ -166,17 +120,17 @@ const StakingModal = ({
               >
                 {buttonText}
               </Button>
-            ) : (
-              <Button
-                type={"secondary"}
-                width={"100%"}
-                height={"47px"}
-                disabled={pending}
-                onClick={() => onApprove()}
-              >
-                Approve
-              </Button>
-            )}
+              : (
+                <Button
+                  type={"secondary"}
+                  width={"100%"}
+                  height={"47px"}
+                  disabled={pending}
+                  onClick={() => onApprove()}
+                >
+                  Approve
+                </Button>
+              )}
           </Box>
         </DialogBody>
       </Panel>
@@ -184,26 +138,6 @@ const StakingModal = ({
   );
 };
 
-const CheckBoxGroup = styled(Box)`
-  display: flex;
-  justify-content: flex-end;
-  margin-bottom: 15px;
-  > div {
-    display: flex;
-    align-items: center;
-    margin-right: 10px;
-    cursor: pointer;
-    > input {
-      cursor: pointer;
-    }
-    > div {
-      color: white;
-      margin-left: 5px;
-      font-size: 12px;
-      margin-top: -2px;
-    }
-  }
-`;
 
 const MaxButton = styled(Box)`
   cursor: pointer;

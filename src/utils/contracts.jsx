@@ -1,5 +1,6 @@
 import { ethers } from "ethers";
 import {
+  GMD_STAKING_ADDR,
   MINT_ADDR,
   MULTICALL_ADDR,
   PRICE_ADDR,
@@ -10,6 +11,7 @@ import ERC20ABI from "../abis/ERC20ABI.json";
 import VaultABI from "../abis/ValutABI.json";
 import PriceABI from "../abis/PriceABI.json";
 import MintABI from "../abis/MintABI.json";
+import GMDStakingABI from '../abis/GMDStakingABI.json'
 
 export const RPC_ENDPOINT = "https://arb1.arbitrum.io/rpc";
 
@@ -31,6 +33,10 @@ export const getPriceContract = (signer) => {
 
 export const getMintContract = (signer) => {
   return getContract(MintABI, MINT_ADDR, signer);
+};
+
+export const getGMDStakingContract = (signer) => {
+  return getContract(GMDStakingABI, GMD_STAKING_ADDR, signer);
 };
 
 export const getMulticallContract = (signer) => {

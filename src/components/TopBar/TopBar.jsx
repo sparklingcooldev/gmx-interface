@@ -31,7 +31,7 @@ function TopBar({ activePage, setActivePage, setNotification }) {
     if (url.includes("earn")) setActivePage(2);
   }, []);
 
-  const menus = ["Dashboard", "Earn", "Mint GMD"];
+  const menus = ["Dashboard", "Earn", "Mint GMD", "Stake"];
 
   const sm = useMediaQuery("(max-width : 550px)");
   return (

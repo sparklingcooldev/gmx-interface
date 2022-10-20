@@ -16,7 +16,7 @@ import { ethers } from "ethers";
 
 const defaultVal = {
   accountData: [{}, {}, {}],
-  fetchAccountData: () => {},
+  fetchAccountData: () => { },
 };
 
 export const LockInfoContext = React.createContext(defaultVal);
@@ -29,7 +29,6 @@ let dataid = null;
 export function LockInfoProvider({ children }) {
   const account = useAddress();
   const [accountData, setAccountData] = useState([
-    { balance: 0, stakedAmount: 0, allowance: false, ethBalance: 0 },
     { balance: 0, stakedAmount: 0, allowance: false, ethBalance: 0 },
     { balance: 0, stakedAmount: 0, allowance: false, ethBalance: 0 },
     { balance: 0, stakedAmount: 0, allowance: false, ethBalance: 0 },
@@ -79,14 +78,6 @@ export function LockInfoProvider({ children }) {
           gdBalance: _balances[i + 6],
         });
       }
-
-      temp.push({
-        balance: 0,
-        stakedAmount: 0,
-        allowance: false,
-        gdBalance: 0,
-        ethBalance: 0,
-      });
       console.log(temp);
       setAccountData(temp);
     } catch (error) {

@@ -19,7 +19,7 @@ import { Pool } from "@uniswap/v3-sdk/";
 import { ethers } from "ethers";
 
 const defaultVal = {
-  fetchData: () => {},
+  fetchData: () => { },
   totalUSDValuts: 0,
   GLPinVault: 0,
   GLPPrice: 0,
@@ -54,16 +54,6 @@ export function TokenInfoProvider({ children }) {
   const [price, setPrice] = useState(0);
 
   const [pool, setPool] = useState([
-    {
-      price: 0,
-      pool: 0,
-      weight: 0,
-      apr: 0,
-      totalStaked: 0,
-      vaultcap: 0,
-      stakable: false,
-      withdrawable: false,
-    },
     {
       price: 0,
       pool: 0,
@@ -170,18 +160,7 @@ export function TokenInfoProvider({ children }) {
           withdrawable: result[4].withdrawable,
           stakable: result[4].stakable,
           vaultcap: result[4].vaultcap,
-        },
-        {
-          price: 0,
-          pool: 0,
-          weight: 0,
-          apr: 0,
-          totalStaked: 0,
-          GDpriceToStakedToken: 1,
-          withdrawable: false,
-          vaultcap: 0,
-          stakable: false,
-        },
+        }
       ]);
     } catch (error) {
       console.log(error);

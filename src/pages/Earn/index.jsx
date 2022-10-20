@@ -40,15 +40,14 @@ const Earn = ({ setNotification }) => {
   const [isWETH, setIsWETH] = useState(false);
 
   const decimals = [6, 18, 8, 18];
-  const symbol = ["USDC", "ETH", "BTC", "GMD"];
+  const symbol = ["USDC", "ETH", "BTC"];
   const urls = [
     "/icons/usdc.svg",
     "/icons/eth.svg",
     "/icons/bitcoin.svg",
-    "/icons/gmd.png",
   ];
-  const fees = ["0.5", "0.25", "0.25", "0.0"];
-  const addresses = [USDC_ADDR, ETH_ADDR, BTC_ADDR, USDC_ADDR];
+  const fees = ["0.5", "0.25", "0.25"];
+  const addresses = [USDC_ADDR, ETH_ADDR, BTC_ADDR];
 
   const getBalance = (amount, i) => {
     return numberWithCommas((amount / Math.pow(10, decimals[i])).toFixed(5));
@@ -197,6 +196,7 @@ const Earn = ({ setNotification }) => {
     }
   };
 
+  console.log(pool)
   return (
     <StyledContainer>
       <StakingModal
@@ -254,7 +254,6 @@ const Earn = ({ setNotification }) => {
                     style={{
                       background: `url(${urls[i]})`,
                       backgroundSize: "100% 100%",
-                      width: i === 3 ? "35px" : "40px",
                     }}
                     mr={"8px"}
                   />
@@ -268,7 +267,7 @@ const Earn = ({ setNotification }) => {
                   <Box>
                     $
                     {numberWithCommas(
-                      i === 3 ? price.toFixed(2) : data.price.toFixed(2)
+                      data.price.toFixed(2)
                     )}
                   </Box>
                 </Box>
@@ -316,28 +315,6 @@ const Earn = ({ setNotification }) => {
                     )
                   </Box>
                 </Box>
-                {i === 3 ? (
-                  <>
-                    <Box>
-                      <Box color={"rgba(255, 255, 255, 0.7)"}>Rewards</Box>
-                      <Box>$0.00</Box>
-                    </Box>
-                    <Box>
-                      <Box color={"rgba(255, 255, 255, 0.7)"}>
-                        Multiplier Points APR
-                      </Box>
-                      <Box>$0.00</Box>
-                    </Box>
-                    <Box>
-                      <Box color={"rgba(255, 255, 255, 0.7)"}>
-                        Boost Percentage
-                      </Box>
-                      <Box>$0.00</Box>
-                    </Box>
-                  </>
-                ) : (
-                  ""
-                )}
               </PanelBody>
               <Divider />
               <PanelBody>
@@ -374,9 +351,9 @@ const Earn = ({ setNotification }) => {
                               filter:
                                 gmxActiveIndex === index
                                   ? `drop-shadow(0px 0px 6px ${hexToRgba(
-                                      entry.color,
-                                      0.7
-                                    )})`
+                                    entry.color,
+                                    0.7
+                                  )})`
                                   : "none",
                               cursor: "pointer",
                             }}
@@ -434,7 +411,7 @@ const Earn = ({ setNotification }) => {
                       disabled={
                         pending ||
                         BigInt(pool[i].totalStaked) >=
-                          BigInt(pool[i].vaultcap) ||
+                        BigInt(pool[i].vaultcap) ||
                         !pool[i].stakable
                       }
                       onClick={() => {
