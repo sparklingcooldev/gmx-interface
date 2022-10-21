@@ -1,10 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from "react";
-import {
-  getMulticallContract,
-  multicall,
-} from "../utils/contracts";
+import { getMulticallContract, multicall } from "../utils/contracts";
 import ValutABI from "../abis/ValutABI.json";
 import ERC20ABI from "../abis/ERC20ABI.json";
 import GMDStakingABI from "../abis/GMDStakingABI.json";
@@ -29,8 +26,8 @@ const defaultVal = {
   apy: 0,
   reward: 0,
   stakedAmount: 0,
-  fetchStakingData: () => { },
-  fetchStakingAccountData: () => { }
+  fetchStakingData: () => {},
+  fetchStakingAccountData: () => {},
 };
 
 export const GMDStakingInfoContext = React.createContext(defaultVal);
@@ -53,56 +50,66 @@ export function GMDStakingInfoProvider({ children }) {
 
   async function fetchStakingData() {
     try {
-      let calls = [{
-        address: GMD_STAKING_ADDR,
-        name: 'poolInfo',
-        params: [0]
-      }];
+      let calls = [
+        {
+          address: GMD_STAKING_ADDR,
+          name: "poolInfo",
+          params: [0],
+        },
+        {
+          address: GMD_STAKING_ADDR,
+          name: "withdrawable",
+          params: [],
+        },
+      ];
       const result = await multicall(GMDStakingABI, calls);
       setAPY(result[0].allocPoint / 100);
-      setWithdrawable(result[0].withdrawable);
+      setWithdrawable(result[1][0]);
     } catch (error) {
       console.log(error);
     }
   }
   async function fetchStakingAccountData() {
     try {
-      let calls = [{
-        address: GMD_ADDR,
-        name: 'allowance',
-        params: [account, GMD_STAKING_ADDR]
-      },
-      {
-        address: GMD_ADDR,
-        name: 'balanceOf',
-        params: [account]
-      },
-      {
-        address: GMD_ADDR,
-        name: 'balanceOf',
-        params: [GMD_STAKING_ADDR]
-      },];
+      let calls = [
+        {
+          address: GMD_ADDR,
+          name: "allowance",
+          params: [account, GMD_STAKING_ADDR],
+        },
+        {
+          address: GMD_ADDR,
+          name: "balanceOf",
+          params: [account],
+        },
+        {
+          address: GMD_ADDR,
+          name: "balanceOf",
+          params: [GMD_STAKING_ADDR],
+        },
+      ];
 
       let result = await multicall(ERC20ABI, calls);
       setAllowance(result[0][0] > ethers.utils.parseEther("10000"));
       setBalance(result[1][0]);
       setTotalStaked(result[2][0] / Math.pow(10, 18));
 
-      calls = [{
-        address: GMD_STAKING_ADDR,
-        name: 'userInfo',
-        params: [0, account]
-      },
-      {
-        address: GMD_STAKING_ADDR,
-        name: 'pendingWETH',
-        params: [0, account]
-      }];
+      calls = [
+        {
+          address: GMD_STAKING_ADDR,
+          name: "userInfo",
+          params: [0, account],
+        },
+        {
+          address: GMD_STAKING_ADDR,
+          name: "pendingWETH",
+          params: [0, account],
+        },
+      ];
 
       result = await multicall(GMDStakingABI, calls);
       setReward(result[1][0] / Math.pow(10, 18));
       setStakedAmount(result[0].amount);
-
     } catch (error) {
       console.log(error);
     }
@@ -136,7 +143,7 @@ export function GMDStakingInfoProvider({ children }) {
         reward,
         stakedAmount,
         fetchStakingData,
-        fetchStakingAccountData
+        fetchStakingAccountData,
       }}
       children={children}
     />

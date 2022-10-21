@@ -247,7 +247,7 @@ const Stake = ({ setNotification }) => {
                   type={"primary"}
                   width={"80px"}
                   height={"36px"}
-                  disabled={pending || !withdrawable}
+                  disabled={pending || !withdrawable || !Number(stakedAmount)}
                   onClick={() => {
                     setOpen(true);
                     setType(2);
