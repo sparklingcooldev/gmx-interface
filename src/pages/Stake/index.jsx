@@ -27,7 +27,7 @@ const Stake = ({ setNotification }) => {
     reward,
     stakedAmount,
     fetchStakingData,
-    fetchStakingAccountData
+    fetchStakingAccountData,
   } = useGMDStakingInfo();
 
   const account = useAddress();
@@ -70,8 +70,7 @@ const Stake = ({ setNotification }) => {
           0,
           maxPressed ? balance : ethers.utils.parseEther(amount)
         );
-      }
-      else {
+      } else {
         estimateGas = await stakingContract.estimateGas.withdraw(
           0,
           maxPressed ? stakedAmount : ethers.utils.parseEther(amount)
@@ -88,14 +87,34 @@ const Stake = ({ setNotification }) => {
           maxPressed ? balance : ethers.utils.parseEther(amount),
           ttx
         );
-      }
-      else {
+      } else {
         tx = await stakingContract.withdraw(
           0,
           maxPressed ? stakedAmount : ethers.utils.parseEther(amount),
           ttx
         );
       }
+      await tx.wait();
+      fetchStakingAccountData();
+    } catch (error) {
+      console.log(error);
+      figureError(error, setNotification);
+    }
+    setPending(false);
+  };
+
+  const onClaim = async () => {
+    setPending(true);
+    try {
+      const stakingContract = getGMDStakingContract(provider.getSigner());
+      let estimateGas, tx;
+      estimateGas = await stakingContract.estimateGas.deposit(0, 0);
+      console.log(estimateGas.toString());
+
+      const ttx = {
+        gasLimit: Math.ceil(estimateGas.toString() * 1.2),
+      };
+      tx = await stakingContract.deposit(0, 0, ttx);
       await tx.wait();
       fetchStakingAccountData();
     } catch (error) {
@@ -116,16 +135,20 @@ const Stake = ({ setNotification }) => {
         pending={pending}
         setPending={setPending}
         setNotification={setNotification}
-        max={type === 1 ? balance / Math.pow(10, 18) : stakedAmount / Math.pow(10, 18)}
+        max={
+          type === 1
+            ? balance / Math.pow(10, 18)
+            : stakedAmount / Math.pow(10, 18)
+        }
         amount={amount}
         setAmount={setAmount}
-        type={type} />
+        type={type}
+      />
       <Box fontSize={"34px"} mb={"8px"} fontWeight={"bold"}>
         Stake
       </Box>
       <Box display={"flex"} justifyContent={"space-between"} flexWrap={"wrap"}>
-
-        <Panel >
+        <Panel>
           <PanelHeader>
             <Box>
               <CoinSVG
@@ -143,9 +166,7 @@ const Stake = ({ setNotification }) => {
           <PanelBody>
             <Box>
               <Box color={"rgba(255, 255, 255, 0.7)"}>Price</Box>
-              <Box>
-                ${price.toFixed(2)}
-              </Box>
+              <Box>${price.toFixed(2)}</Box>
             </Box>
             <Box>
               <Box color={"rgba(255, 255, 255, 0.7)"}>Wallet</Box>
@@ -168,30 +189,31 @@ const Stake = ({ setNotification }) => {
             <Box>
               <Box color={"rgba(255, 255, 255, 0.7)"}>Staked</Box>
               <Box>
-                {getBalance(stakedAmount)} GMD (${getBalanceUSD(stakedAmount, price)})
+                {getBalance(stakedAmount)} GMD ($
+                {getBalanceUSD(stakedAmount, price)})
               </Box>
             </Box>
 
             <Box>
               <Box color={"rgba(255, 255, 255, 0.7)"}>Rewards</Box>
-              <Box>{getBalance(reward, 0)} WETH (${getBalanceUSD(reward, pool[1].price, 0)})</Box>
+              <Box>
+                {getBalance(reward, 0)} WETH ($
+                {getBalanceUSD(reward, pool[1].price, 0)})
+              </Box>
             </Box>
-
-
           </PanelBody>
           <Divider />
           <PanelBody>
             <Box alignItems={"center"} mb={"20px!important"}>
-              <Box color={"rgba(255, 255, 255, 0.7)"}>
-                Total Staked in Pool
-              </Box>
+              <Box color={"rgba(255, 255, 255, 0.7)"}>Total Staked in Pool</Box>
               <Box
                 display={"flex"}
                 flexDirection={"column"}
                 alignItems={"center"}
               >
                 <Box>
-                  {getBalance(totalStaked, 0)} GMD (${getBalanceUSD(totalStaked, price, 0)})
+                  {getBalance(totalStaked, 0)} GMD ($
+                  {getBalanceUSD(totalStaked, price, 0)})
                 </Box>
               </Box>
             </Box>
@@ -213,9 +235,7 @@ const Stake = ({ setNotification }) => {
                   type={"primary"}
                   width={"80px"}
                   height={"36px"}
-                  disabled={
-                    pending
-                  }
+                  disabled={pending}
                   onClick={() => {
                     setOpen(true);
                     setType(1);
@@ -227,22 +247,31 @@ const Stake = ({ setNotification }) => {
                   type={"primary"}
                   width={"80px"}
                   height={"36px"}
-                  disabled={
-                    pending || !withdrawable
-                  }
+                  disabled={pending || !withdrawable}
                   onClick={() => {
                     setOpen(true);
-                    setType(2)
+                    setType(2);
                   }}
                 >
                   Unstake
+                </Button>
+                <Button
+                  type={"primary"}
+                  width={"80px"}
+                  height={"36px"}
+                  disabled={pending || !Number(reward)}
+                  onClick={() => {
+                    onClaim();
+                  }}
+                >
+                  Claim
                 </Button>
               </>
             )}
           </Box>
         </Panel>
       </Box>
-    </StyledContainer >
+    </StyledContainer>
   );
 };
 
@@ -252,7 +281,7 @@ const CoinSVG = styled(Box)`
 `;
 
 const Panel = styled(Box)`
- padding: 15px 15px 18px;
+  padding: 15px 15px 18px;
   border: 1px solid #1e2136;
   border-radius: 4px;
   font-size: 15px;
