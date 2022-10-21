@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from "react";
-import { multicall } from "../utils/contracts";
+import { getTokenContract, multicall } from "../utils/contracts";
 import PriceABI from "../abis/PriceABI.json";
 import ValutABI from "../abis/ValutABI.json";
 import {
@@ -10,6 +10,7 @@ import {
   PRICE_ADDR,
   USDC_ADDR,
   VAULT_ADDR,
+  GMD_ADDR,
 } from "../abis/address";
 
 import { Token } from "@uniswap/sdk-core";
@@ -19,13 +20,14 @@ import { Pool } from "@uniswap/v3-sdk/";
 import { ethers } from "ethers";
 
 const defaultVal = {
-  fetchData: () => { },
+  fetchData: () => {},
   totalUSDValuts: 0,
   GLPinVault: 0,
   GLPPrice: 0,
   totalFees: 0,
   GLPbackingNeeded: 0,
   price: 0,
+  liquidity: 0,
   pool: [{}, {}, {}],
 };
 
@@ -52,6 +54,7 @@ export function TokenInfoProvider({ children }) {
   const [totalFees, setTotalFees] = useState(0);
   const [GLPbackingNeeded, setGLPBackingNeeded] = useState(0);
   const [price, setPrice] = useState(0);
+  const [liquidity, setLiquidity] = useState(0);
 
   const [pool, setPool] = useState([
     {
@@ -160,7 +163,7 @@ export function TokenInfoProvider({ children }) {
           withdrawable: result[4].withdrawable,
           stakable: result[4].stakable,
           vaultcap: result[4].vaultcap,
-        }
+        },
       ]);
     } catch (error) {
       console.log(error);
@@ -214,6 +217,9 @@ export function TokenInfoProvider({ children }) {
     const price2 = await DAI_USDC_POOL.token1Price;
     console.log("Price", price1.toFixed(10), price2.toFixed(10));
     setPrice(Number(price1.toFixed(10)));
+    const tokenContract = getTokenContract(GMD_ADDR);
+    const liquidity = await tokenContract.balanceOf(poolAddress);
+    setLiquidity(liquidity / Math.pow(10, 18));
   }
 
   useEffect(() => {
@@ -236,6 +242,7 @@ export function TokenInfoProvider({ children }) {
         totalFees,
         GLPbackingNeeded,
         pool,
+        liquidity,
         fetchData,
       }}
       children={children}

@@ -9,25 +9,30 @@ import { useState } from "react";
 import useMintInfo from "../../hooks/useMintInfo";
 import { numberWithCommas } from "../../utils/functions";
 import useTokenInfo from "../../hooks/useTokenInfo";
+import useGMDStakingInfo from "../../hooks/useGMDStakingInfo";
 
 const Tokens = () => {
   const { mintData } = useMintInfo();
-  const { price } = useTokenInfo();
+  const { price, liquidity } = useTokenInfo();
+  const { totalStaked } = useGMDStakingInfo();
 
   let gmxDistributionData = [
     {
       name: "staked",
-      value: 0,
+      value: (totalStaked / mintData.totalSupply) * 100,
       color: "#4353fa",
     },
     {
       name: "in liquidity",
-      value: 0,
+      value: (liquidity / mintData.totalSupply) * 100,
       color: "#0598fa",
     },
     {
       name: "not staked",
-      value: 100,
+      value:
+        ((mintData.totalSupply - totalStaked - liquidity) /
+          mintData.totalSupply) *
+        100,
       color: "#5c0af5",
     },
   ];
@@ -50,7 +55,7 @@ const Tokens = () => {
             className="stats-label-color"
             style={{ backgroundColor: payload[0].color }}
           ></div>
-          {payload[0].value}% {payload[0].name}
+          {payload[0].value.toFixed(2)}% {payload[0].name}
         </div>
       );
     }
@@ -64,7 +69,9 @@ const Tokens = () => {
     },
     {
       text: "Total Staked",
-      value: `$0.00`,
+      value: `${totalStaked.toFixed(2)} GMD ($${(price * totalStaked).toFixed(
+        2
+      )})`,
     },
     {
       text: "Market Cap",

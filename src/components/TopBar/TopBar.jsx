@@ -37,8 +37,12 @@ function TopBar({ activePage, setActivePage, setNotification }) {
   return (
     <StyledContainer>
       <Box display={"flex"} alignItems={"center"}>
-        <Logo>
+        <Logo
+          target={"_blank"}
+          href={"https://heartfelt-halva-8e3cb9.netlify.app/"}
+        >
           <Box />
+          <Box>GMD</Box>
         </Logo>
         {!sm ? (
           <Menus active={activePage}>
@@ -93,21 +97,24 @@ const Menus = styled(Box)`
   }
 `;
 
-const Logo = styled(Box)`
-  font-size: 17px;
+const Logo = styled.a`
+  cursor: pointer;
+  font-size: 24px;
   padding: 15px;
   margin-left: -15px;
   display: flex;
   margin-right: 12px;
+  color: white;
   height: fit-content;
-  > div {
+  align-items: center;
+  > div:nth-child(1) {
     background-image: url("/icons/gmd.png");
     background-size: 100% 100%;
-    width: 35px;
-    height: 40px;
+    width: 30px;
+    height: 36px;
+    margin-right: 8px;
   }
 `;
-
 const StyledContainer = styled(Box)`
   height: 62px;
   backdrop-filter: blur(4px);
